@@ -1,7 +1,7 @@
 # FinanceDataReader
 Financial price data reader (an alternative to google finance and yahoo finance in pandas-datareader)
 
-## nstall
+## Install
 ```
 pip install finance-datareader
 ```
@@ -11,10 +11,22 @@ pip install finance-datareader
 
 ```python
 import FinanceDataReader as fdr
+```
 
-df = fdr.DataReader('105560', '2017') # just only year
+## Examples
+```python
+df = fdr.DataReader('AAPL', '2017') # AAPL price data 2017
+
+df = fdr.DataReader('GOOG', '2018-01-01') # Alphabet Inc Class C, 2018-01-01 ~ today
+```
+
+## Examples
+```python
+# 105560 (KRX: KB Finance Group)
+
+df = fdr.DataReader('105560', '2017') # year 2017
+
 df = fdr.DataReader('105560', '2018-01-01') # '2018-01-01' ~ today 
-df = fdr.DataReader('105560', '2018-01-01', '2018-03-30') # '2018-01-01' ~ '2018-03-30' 
 
-df.head()
+df = fdr.DataReader('105560', '2018-01-01', '2018-03-30') # '2018-01-01' ~ '2018-03-30' 
 ```
