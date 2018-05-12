@@ -1,0 +1,13 @@
+
+__pycache__
+*.pyc
+*.egg-info
+.coverage
+build
+dist
+docs/build
+.tox/
+.cache/
+.idea
+*.iml
+*~
