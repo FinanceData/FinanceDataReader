@@ -18,7 +18,6 @@ setup(
     license='MIT License',
     python_requires  = '>=3',
     classifiers      = [
-        'Intended Audience :: Science/Research',
         'Operating System :: OS Independent',
         'Programming Language :: Cython',
         'Programming Language :: Python',
@@ -28,7 +27,6 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6'
-        'Topic :: Scientific/Engineering',
     ],
     keywords = ['data', 'finance'],
     zip_safe=False,
