@@ -13,7 +13,6 @@ setup(
     author = 'FinanceData.KR',
     author_email = 'plusjune@financedata.kr',
     url = 'https://github.com/financedata/financedatareader',
-#     download_url = 'https://githur.com/rampart81/pyquibase/archive/1.0.tar.gz',
     install_requires = INSTALL_REQUIRES,
     packages = find_packages(exclude=['contrib', 'docs', 'tests*']),
     license='MIT License',
