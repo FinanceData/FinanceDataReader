@@ -23,7 +23,7 @@ FinanceDataReader는 [pandas-datareader](https://pandas-datareader.readthedocs.i
 # Install
 
 ```bash
-pip install finance-datareader
+pip install -U finance-datareader
 ```
 
 
