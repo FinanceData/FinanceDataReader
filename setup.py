@@ -1,5 +1,6 @@
 
 from setuptools import setup, find_packages
+import FinanceDataReader
 
 NAME = 'finance-datareader'
 INSTALL_REQUIRES = (
@@ -8,7 +9,7 @@ INSTALL_REQUIRES = (
 
 setup(
     name = 'finance-datareader',
-    version = '0.0.1',
+    version = FinanceDataReader.__version__,
     description = 'Financial data reader (price, stock list of markets)',
     author = 'FinanceData.KR',
     author_email = 'plusjune@financedata.kr',
