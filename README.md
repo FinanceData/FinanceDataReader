@@ -8,9 +8,9 @@ https://github.com/FinanceData/FinanceDataReader
 # Overview
 금융 데이터를 다루는데 가장 기본이 되는 데이터는 거래소별 전체 종목 코드와 가격 데이터 이다.
 
-(pandas-datareader)[https://pandas-datareader.readthedocs.io] 는 잘 구성된 시계열 데이터 수집 라이브러리로 사용이 간편하고 다양한 시계열 데이터를 수집할 수 있다는 장점이 있다.  (현재 버전 : pandas_datareader 0.6.0) 하지만, 거래소별(KRX, NASDAQ, NYSE 등) 전체 종목 코드(ticker symbol)를 가져오는 기능이 없으며, 야후 파이낸스가 더 이상지원되지 않고(deprecated), 구글 파이낸스는 UNSTABLE_WARNING + RemoteDataError 를 낸다. 
+[pandas-datareader](https://pandas-datareader.readthedocs.io) 는 잘 구성된 시계열 데이터 수집 라이브러리로 사용이 간편하고 다양한 시계열 데이터를 수집할 수 있다는 장점이 있다.  (현재 버전 : pandas_datareader 0.6.0) 하지만, 거래소별(KRX, NASDAQ, NYSE 등) 전체 종목 코드(ticker symbol)를 가져오는 기능이 없으며, 야후 파이낸스가 더 이상지원되지 않고(deprecated), 구글 파이낸스는 UNSTABLE_WARNING + RemoteDataError 를 낸다. 
 
-FinanceDataReader는 (pandas-datareader)[https://pandas-datareader.readthedocs.io] 를 대체하기 보다 보완하기 위한 목적으로 만들어졌다. 주요한 기능은 다음과 같다.
+FinanceDataReader는 [pandas-datareader](https://pandas-datareader.readthedocs.io) 를 대체하기 보다 보완하기 위한 목적으로 만들어졌다. 주요한 기능은 다음과 같다.
 
 * 해외주식 가격 데이터: AAPL(애플), AMZN(아마존), GOOG(구글) 등
 * 국내주식 가격 데이터: 005930(삼성전자), 091990(셀트리온헬스케어) 등
@@ -74,4 +74,4 @@ df_spx = fdr.StockListing('S&P500')
 
 
 
-#### 2018 (FinanceData.KR)[http://financedata.kr]
+#### 2018 [FinanceData.KR](http://financedata.kr)
