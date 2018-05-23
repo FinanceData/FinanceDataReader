@@ -35,19 +35,16 @@ import FinanceDataReader as fdr
 # 애플(AAPL), 2017년~현재
 df = fdr.DataReader('AAPL', '2017')
 
-# 아마존(AMZN), 2010~현재
-df = fdr.DataReader('AMZN', '2010')
+# 셀트리온(068270), 2017-01-01 ~ 2018-05-30
+df = fdr.DataReader('068270', '2017-01-01', '2018-05-30')
 
-# 셀트리온(068270), 2017년~현재
-df = fdr.DataReader('068270', '2017')
-
-# KS11 (KOSPI 지수), 2015년~현재
+# KS11 (KOSPI 지수), 2015-01-01~현재
 df = fdr.DataReader('KS11', '2015')
 
 # 다우지수, 2015년~현재
-df = fdr.DataReader('DJI', '2015')
+df = fdr.DataReader('DJI', '2015-01-01')
 
-# 원달러 환율, 1995년~현재
+# 원달러 환율, 1995-01-01 ~ 현재
 df = fdr.DataReader('USD/KRW', '1995')
 
 # 비트코인 원화 가격 (빗썸), 2016년~현재
