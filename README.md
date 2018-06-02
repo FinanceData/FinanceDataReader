@@ -19,6 +19,9 @@ FinanceDataReader는 [pandas-datareader](https://pandas-datareader.readthedocs.i
 * 암호화폐 가격: BTC/USD (비트코인 달러 가격, Bitfinex), BTC/KRW (비트코인 원화 가격, 빗썸)
 * 거래소별 전체 종목 코드: KRX (KOSPI, KODAQ, KONEX), NASDAQ, NYSE, AMEX, S&P 500 종목
 
+FinanceDataReader 심볼 리스트는 다음 문서에 정리되어 있다. (빠른 참조)
+* http://nbviewer.jupyter.org/540b4c74a898bbe1af8715926eed24f8
+
 
 # Install
 
@@ -59,6 +62,9 @@ df_spx = fdr.StockListing('S&P500')
 
 
 # Changes
+2018-05-17 v0.4.0
+* pip install (packaging register The Python Package Index (PyPI) repository)
+
 2018-05-17 v0.2.0
 * StockListing, SP500 (S&P 500 Listings, wikipedia), 추가
 
