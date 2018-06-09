@@ -65,6 +65,9 @@ df_spx = fdr.StockListing('S&P500')
 
 
 # Changes
+2018-06-09 v0.5.0
+* 상품선물 추가, 국채 심볼 추가, 항생지수 FIX (HSI)
+
 2018-05-17 v0.4.0
 * pip install (packaging register The Python Package Index (PyPI) repository)
 
