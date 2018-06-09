@@ -12,6 +12,12 @@ class InvestingDailyReader:
         self.end = end
 
     def _get_currid_investing(self, symbol):
+        predef_table = { # for exceptional case
+            'HSI': '179', # Hang Seng (HSI)
+        }
+        if symbol in predef_table.keys():
+            return predef_table[symbol]
+        
         url = 'https://www.investing.com/search/service/search'
         headers = {
             'User-Agent':'Mozilla',
@@ -34,6 +40,8 @@ class InvestingDailyReader:
         start_date_str = self.start.strftime('%m/%d/%Y')
         end_date_str = self.end.strftime('%m/%d/%Y')
         curr_id = self._get_currid_investing(self.symbols)
+        if not curr_id:
+            raise ValueError("Symbol unsupported or not found")
 
         url = 'https://www.investing.com/instruments/HistoricalDataAjax'
         data = {    

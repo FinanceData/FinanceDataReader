@@ -1,0 +1,181 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>상장종목 목록 (거래소별) &#8212; FinanceDataReader 0.4.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="색인" href="genindex.html" />
+    <link rel="search" title="검색" href="search.html" />
+    <link rel="prev" title="FinanceDataReader" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>상장종목 목록 (거래소별)<a class="headerlink" href="#id1" title="제목 주소">¶</a></h1>
+<p>거래소 별로 상장종목 목록을 가져옵니다</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">fdr</span><span class="o">.</span><span class="n">StockListing</span><span class="p">(</span><span class="s1">&#39;KRX&#39;</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+<p>여기에 사용할 수 있는 거래소 심볼은 다음과 같습니다</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="34%" />
+<col width="45%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">심볼</th>
+<th class="head">거래소</th>
+<th class="head">비고</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>KRX</td>
+<td>KRX 종목 전체</td>
+<td>KOSPI,KOSDAQ,KONEX 모두</td>
+</tr>
+<tr class="row-odd"><td>KOSPI</td>
+<td>KOSPI 종목</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>KOSDAQ</td>
+<td>KOSDAQ 종목</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>KONEX</td>
+<td>KONEX 종목</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>KONEX</td>
+<td>KONEX 종목</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>NASDAQ</td>
+<td>나스닥 종목</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>NYSE</td>
+<td>뉴욕 증권거래소 종목</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>AMEX</td>
+<td>AMEX 종목</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>SP500</td>
+<td>S&amp;P 500 종목</td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id2">
+<h1>가격 데이터<a class="headerlink" href="#id2" title="제목 주소">¶</a></h1>
+<div class="section" id="id3">
+<h2>국내 주식<a class="headerlink" href="#id3" title="제목 주소">¶</a></h2>
+<ul class="simple">
+<li>단축 코드(6자리)를 사용합니다. 예를 들어, '005930'(삼성전자), '215600'(신라젠)</li>
+<li>전체 코드는 <cite>fdr.StockListing('KRX')</cite> 를 통해 얻을 수 있습니다</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h2>미국 주식<a class="headerlink" href="#id4" title="제목 주소">¶</a></h2>
+<ul class="simple">
+<li>티커를 사용합니다. 예를 들어, 'AAPL'(애플), 'AMZN'(아마존), 'GOOG'(구글)</li>
+<li>NASDAQ 티커 전체는 <cite>fdr.StockListing('NASDAQ')</cite> 를 통해 얻을 수 있습니다</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id5">
+<h1>참고<a class="headerlink" href="#id5" title="제목 주소">¶</a></h1>
+<p>FinanceDataReader 사용자 안내서
+* <a class="reference external" href="https://financedata.github.io/posts/finance-data-reader-users-guide.html">https://financedata.github.io/posts/finance-data-reader-users-guide.html</a></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">목차</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">상장종목 목록 (거래소별)</a></li>
+<li><a class="reference internal" href="#id2">가격 데이터</a><ul>
+<li><a class="reference internal" href="#id3">국내 주식</a></li>
+<li><a class="reference internal" href="#id4">미국 주식</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id5">참고</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="이전 장">FinanceDataReader</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>현재 문서</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tickers.rst.txt"
+            rel="nofollow">소스 코드를 보려면</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>빠른 검색</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="바로 가기" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, plusjune.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/tickers.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,217 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>FinanceDataReader &#8212; FinanceDataReader 0.4.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="색인" href="genindex.html" />
+    <link rel="search" title="검색" href="search.html" />
+    <link rel="next" title="상장종목 목록 (거래소별)" href="tickers.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="financedatareader">
+<h1>FinanceDataReader<a class="headerlink" href="#financedatareader" title="제목 주소">¶</a></h1>
+<p>FinanceDataReader, The Ultimate Financial Data Reader</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tickers.html">상장종목 목록 (거래소별)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tickers.html#id2">가격 데이터</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tickers.html#id3">국내 주식</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tickers.html#id4">미국 주식</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tickers.html#id5">참고</a></li>
+</ul>
+</div>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="제목 주소">¶</a></h2>
+<p>금융 데이터를 다루는데 가장 기본이 되는 데이터는 거래소별 전체 종목 코드와 가격 데이터입니다.</p>
+<p>FinanceDataReader는 <a class="reference external" href="https://pandas-datareader.readthedocs.io">pandas-datareader</a> 를 대체하기 보다 보완하기 위한 목적으로 만들어졌으며, 주요한 기능은 다음과 같습니다.</p>
+<ul class="simple">
+<li>해외주식 가격: AAPL(애플), AMZN(아마존), GOOG(구글) 등</li>
+<li>국내주식 가격: 005930(삼성전자), 091990(셀트리온헬스케어) 등</li>
+<li>지수: KS11(코스피), KQ11(코스닥), DJI(다우), IXIC(나스닥), US500(S&amp;P 500)</li>
+<li>환율: USD/KRX (원달러), USD/EUR(달러/유로화), CNY/KRW: 위엔화/원화</li>
+<li>암호화폐: BTC/USD (비트코인/달러, Bitfinex), BTC/KRW (비트코인/원화, 빗썸)</li>
+<li>거래소별 전체 종목 코드: KRX, NASDAQ, NYSE, AMEX, S&amp;P 500 종목</li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="제목 주소">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -U finance-datareader
+</pre></div>
+</div>
+</div>
+<div class="section" id="wheel">
+<h2>설치 (wheel 설치)<a class="headerlink" href="#wheel" title="제목 주소">¶</a></h2>
+<p>망분리 혹은 방화벽등의 이슈로 pip로 설치가어려운 경우 아래 디렉토리에서 whl 파일을 다운로드합니다.</p>
+<blockquote>
+<div><a class="reference external" href="https://github.com/FinanceData/FinanceDataReader/tree/master/dist">https://github.com/FinanceData/FinanceDataReader/tree/master/dist</a></div></blockquote>
+<p>.whl 파일을 다음과 같이 pip로 설치합니다.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install finance_datareader-x.x.x-py3-none-any.whl
+</pre></div>
+</div>
+</div>
+<div class="section" id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="제목 주소">¶</a></h2>
+<div class="section" id="id1">
+<h3>종목과 종목코드 읽기<a class="headerlink" href="#id1" title="제목 주소">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 한국거래소 상장종목과 코드명 전체</span>
+<span class="n">df_krx</span> <span class="o">=</span> <span class="n">fdr</span><span class="o">.</span><span class="n">StockListing</span><span class="p">(</span><span class="s1">&#39;KRX&#39;</span><span class="p">)</span>
+
+<span class="c1"># S&amp;P 500 종목과 코드명 전체</span>
+<span class="n">df_spx</span> <span class="o">=</span> <span class="n">fdr</span><span class="o">.</span><span class="n">StockListing</span><span class="p">(</span><span class="s1">&#39;S&amp;P500&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>가격 데이터 읽기<a class="headerlink" href="#id2" title="제목 주소">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FinanceDataReader</span> <span class="kn">as</span> <span class="nn">fdr</span>
+
+<span class="c1"># 애플(AAPL), 2017-01-01 ~ 현재</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">fdr</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;AAPL&#39;</span><span class="p">,</span> <span class="s1">&#39;2017&#39;</span><span class="p">)</span>
+
+<span class="c1"># 셀트리온(068270), 2017-01-01 ~ 2018-05-30</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">fdr</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;068270&#39;</span><span class="p">,</span> <span class="s1">&#39;2017-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2018-05-30&#39;</span><span class="p">)</span>
+
+<span class="c1"># KS11 (KOSPI 지수), 2015-01-01~현재</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">fdr</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;KS11&#39;</span><span class="p">,</span> <span class="s1">&#39;2015&#39;</span><span class="p">)</span>
+
+<span class="c1"># 다우지수, 2015년~현재</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">fdr</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;DJI&#39;</span><span class="p">,</span> <span class="s1">&#39;2015-01-01&#39;</span><span class="p">)</span>
+
+<span class="c1"># 원달러 환율, 1995-01-01 ~ 현재</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">fdr</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;USD/KRW&#39;</span><span class="p">,</span> <span class="s1">&#39;1995&#39;</span><span class="p">)</span>
+
+<span class="c1"># 비트코인 원화 가격 (빗썸), 2016년~현재</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">fdr</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;BTC/KRW&#39;</span><span class="p">,</span> <span class="s1">&#39;2016&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="release">
+<h2>Release<a class="headerlink" href="#release" title="제목 주소">¶</a></h2>
+<p>2018-05-17 v0.2.0
+- StockListing, SP500 (S&amp;P 500 Listings, wikipedia), 추가</p>
+<p>2018-05-16 v0.1.0
+- StockListing KRX, KOSPI, KODAQ, KONEX, 추가
+- StockListing NASDAQ, NYSE, AMEX, 추가</p>
+<p>2018-05-14 v0.0.1
+- DataReader 국내/매국 주가 데이터, 추가</p>
+</div>
+<div class="section" id="contribute">
+<h2>Contribute<a class="headerlink" href="#contribute" title="제목 주소">¶</a></h2>
+<p>제안, 버그, 개선, 질문 등 이슈는 다음에 등록해 주시면 개선하는데 큰 도움이 됩니다</p>
+<ul class="simple">
+<li>이슈 트래커: <a class="reference external" href="https://github.com/FinanceData/FinanceDataReader/issues">https://github.com/FinanceData/FinanceDataReader/issues</a></li>
+</ul>
+</div>
+<div class="section" id="license">
+<h2>license<a class="headerlink" href="#license" title="제목 주소">¶</a></h2>
+<p>MIT license를 따릅니다</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h1>찾아보기<a class="headerlink" href="#id3" title="제목 주소">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">색인</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">검색 페이지</span></a></li>
+</ul>
+<p>2018 FinanceData.KR <a class="reference external" href="http://financedata.kr">http://financedata.kr</a></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">목차</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">FinanceDataReader</a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#wheel">설치 (wheel 설치)</a></li>
+<li><a class="reference internal" href="#quick-start">Quick Start</a><ul>
+<li><a class="reference internal" href="#id1">종목과 종목코드 읽기</a></li>
+<li><a class="reference internal" href="#id2">가격 데이터 읽기</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#release">Release</a></li>
+<li><a class="reference internal" href="#contribute">Contribute</a></li>
+<li><a class="reference internal" href="#license">license</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">찾아보기</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="tickers.html" title="다음 장">상장종목 목록 (거래소별)</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>현재 문서</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">소스 코드를 보려면</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>빠른 검색</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="바로 가기" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, plusjune.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
