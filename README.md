@@ -20,6 +20,7 @@ The main functions are as follows.
 # Install
 
 ```bash
+pip install finance-datareader # for install
 pip install -U finance-datareader # for update
 ```
 
