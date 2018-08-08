@@ -5,28 +5,36 @@ from io import StringIO
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
 class InvestingDailyReader:
-    def __init__(self, symbols, start=None, end=None):
+    def __init__(self, symbols, start=None, end=None, country=None):
         self.symbols = symbols
         start, end = _validate_dates(start, end)
         self.start = start
         self.end = end
+        self.country = country
 
-    def _get_currid_investing(self, symbol):
+    def _get_currid_investing(self, symbol, country):
         predef_table = { # for exceptional case
             'HSI': '179', # Hang Seng (HSI)
         }
         if symbol in predef_table.keys():
             return predef_table[symbol]
         
-        url = 'https://www.investing.com/search/service/search'
+        country_map = {'KR':'11', 'US':'5', 'CN':'37', 'HK':'39', 'JP':'35'}
+        if country:
+            country_id = country_map[country.upper()] if country in country_map.keys() else '0'
+        else:
+            country_id = '11' if symbol.isnumeric() else '0'
+
+        url = 'https://kr.investing.com/search/service/search'
         headers = {
             'User-Agent':'Mozilla',
             'X-Requested-With':'XMLHttpRequest',
         }
+
         data = {
             'search_text': symbol,
             'term': symbol,
-            'country_id': '0',
+            'country_id': country_id,
             'tab_id': 'All',
         }
         r = requests.post(url, data=data, headers=headers)
@@ -39,7 +47,7 @@ class InvestingDailyReader:
     def read(self):
         start_date_str = self.start.strftime('%m/%d/%Y')
         end_date_str = self.end.strftime('%m/%d/%Y')
-        curr_id = self._get_currid_investing(self.symbols)
+        curr_id = self._get_currid_investing(self.symbols, self.country)
         if not curr_id:
             raise ValueError("Symbol unsupported or not found")
 
