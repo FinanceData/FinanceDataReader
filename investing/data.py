@@ -5,8 +5,8 @@ from io import StringIO
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
 class InvestingDailyReader:
-    def __init__(self, symbols, start=None, end=None, country=None):
-        self.symbols = symbols
+    def __init__(self, symbol, start=None, end=None, country=None):
+        self.symbol = symbol
         start, end = _validate_dates(start, end)
         self.start = start
         self.end = end
@@ -47,7 +47,7 @@ class InvestingDailyReader:
     def read(self):
         start_date_str = self.start.strftime('%m/%d/%Y')
         end_date_str = self.end.strftime('%m/%d/%Y')
-        curr_id = self._get_currid_investing(self.symbols, self.country)
+        curr_id = self._get_currid_investing(self.symbol, self.country)
         if not curr_id:
             raise ValueError("Symbol unsupported or not found")
 

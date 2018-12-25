@@ -11,7 +11,7 @@ The main functions are as follows.
 * Indexes: KOSPI, KOSDAQ, DJI, IXIC, US500(S&P 500) ...
 * Exchanges: USD/KRX, USD/EUR, CNY/KRW ...
 * Cryptocurrency: BTC/USD (Bitfinex), BTC/KRW (Bithumb)
-* Symbols listings: KRX (KOSPI, KODAQ, KONEX), NASDAQ, NYSE, AMEX and S&P 500
+* Symbol listings: KRX (KOSPI, KODAQ, KONEX), NASDAQ, NYSE, AMEX and S&P 500
 
 # Install
 
