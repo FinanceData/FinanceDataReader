@@ -23,7 +23,7 @@ class NaverDailyReader:
         df = pd.read_csv(StringIO(data), delimiter='|', header=None, dtype={0:str})
         df.columns  = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
         df['Date'] = pd.to_datetime(df['Date'], format='%Y%m%d')
-        df.set_index(df['Date'], inplace=True)
+        df.set_index('Date', inplace=True)
         df.sort_index(inplace=True)
         df['Change'] = df['Close'].pct_change()
 

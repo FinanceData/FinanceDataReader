@@ -25,7 +25,7 @@ class InvestingDailyReader:
         else:
             country_id = '11' if symbol.isnumeric() else '0'
 
-        url = 'https://kr.investing.com/search/service/search'
+        url = 'https://www.investing.com/search/service/search'
         headers = {
             'User-Agent':'Mozilla',
             'X-Requested-With':'XMLHttpRequest',
@@ -40,7 +40,7 @@ class InvestingDailyReader:
         r = requests.post(url, data=data, headers=headers)
         jo = json.loads(r.text)
         for row in jo['All']:
-            if row['symbol'] == symbol.upper():
+            if row['symbol'].upper() == symbol.upper():
                 return row['pair_ID']
         return None
 
@@ -70,6 +70,8 @@ class InvestingDailyReader:
         r = requests.post(url, data, headers=headers)
         dfs = pd.read_html(StringIO(r.text))
         df = dfs[0]
+        if (len(df)==0) or ("No results found" == df.iloc[0]['Date']):
+            return pd.DataFrame()
         df['Date'] = pd.to_datetime(df['Date'])
         df = df.set_index('Date')
         cols_dict = {'Price':'Close', 'Vol.':'Volume', 'Change %':'Change'}

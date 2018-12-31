@@ -50,10 +50,10 @@ df = fdr.DataReader('USD/KRW', '1995-01-01')
 # Bitcoin KRW price (Bithumbs), 2016 ~ Now
 df = fdr.DataReader('BTC/KRW', '2016-01-01')
 
-# KRX stock symbols and names
+# KRX stock symbol list and names
 df_krx = fdr.StockListing('KRX')
 
-# S&P 500 symbols
+# S&P 500 symbol list
 df_spx = fdr.StockListing('S&P500')
 ```
 
