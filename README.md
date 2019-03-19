@@ -1,6 +1,6 @@
 
 # FinanceDataReader
-Financial data reader
+[FinanceData.KR](FinanceData.KR) Open Source Financial data reader
 
 # Overview
 The FinanceDataReader is intended to complement rather than replacement [pandas-datareader](https://pandas-datareader.readthedocs.io). 
