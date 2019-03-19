@@ -62,8 +62,8 @@ df_spx = fdr.StockListing('S&P500')
 * [Quick-Reference (Symbol List)](https://github.com/FinanceData/FinanceDataReader/wiki/Quick-Reference)
 
 ## FinanceDataReader Notebooks
-* [S&P500 가격 데이터 수집과 수익률 분석](https://nbviewer.jupyter.org/710b8f0a4bd9a8df91ae1be6c7e838b1) S&P500 Stock Price data and Returns analysis
-* [S&P500 팩터 데이터 수집과 분석](https://nbviewer.jupyter.org/35a1b0d5248bc9b09513e53be437ac42) S&P500 Stock Factors(FINVIZ) analysis 
+* [S&P500 가격 데이터 수집과 수익률 분석](https://nbviewer.jupyter.org/710b8f0a4bd9a8df91ae1be6c7e838b1) 
+* [S&P500 팩터 데이터 수집과 분석](https://nbviewer.jupyter.org/35a1b0d5248bc9b09513e53be437ac42) 
 
 ## Notes
 * All stock price of KRX is adjust price and date from year 1992<br>
