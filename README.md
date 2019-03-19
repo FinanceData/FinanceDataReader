@@ -57,12 +57,15 @@ df_krx = fdr.StockListing('KRX')
 df_spx = fdr.StockListing('S&P500')
 ```
 
-## Using FinanceData
+## Using FinanceDataReader
 * [Users-Guide](https://github.com/FinanceData/FinanceDataReader/wiki/Users-Guide)
 * [Quick-Reference (Symbol List)](https://github.com/FinanceData/FinanceDataReader/wiki/Quick-Reference)
 
+## FinanceDataReader Notebooks
+* [S&P500 가격 데이터 수집과 수익률 분석](https://nbviewer.jupyter.org/710b8f0a4bd9a8df91ae1be6c7e838b1) S&P500 Stock Price data and Returns analysis
+* [S&P500 팩터 데이터 수집과 분석](https://nbviewer.jupyter.org/35a1b0d5248bc9b09513e53be437ac42) S&P500 Stock Factors(FINVIZ) analysis 
 
-# Notes (Korean)
+## Notes (Korean)
 * All stock price of KRX is adjust price and date from year 1992<br>
 한국거래소 종목의 모두 수정가격 adjust 이며, 1992년 부터 현재까지 가격 데이터를 제공합니다
 
