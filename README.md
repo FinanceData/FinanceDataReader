@@ -6,12 +6,12 @@
 The FinanceDataReader is intended to complement rather than replacement [pandas-datareader](https://pandas-datareader.readthedocs.io). 
 The main functions are as follows.
 
+* Symbol listings: KRX (KOSPI, KODAQ, KONEX), NASDAQ, NYSE, AMEX and S&P 500
 * Stock price(Word wide): AAPL, AMZN, GOOG ...
 * Stock price(KRX): 005930(Samsung), 091990(Celltrion Healthcare) ...
 * Indexes: KOSPI, KOSDAQ, DJI, IXIC, US500(S&P 500) ...
 * Exchanges: USD/KRX, USD/EUR, CNY/KRW ...
 * Cryptocurrency: BTC/USD (Bitfinex), BTC/KRW (Bithumb)
-* Symbol listings: KRX (KOSPI, KODAQ, KONEX), NASDAQ, NYSE, AMEX and S&P 500
 
 # Install
 
