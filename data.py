@@ -3,6 +3,8 @@ from FinanceDataReader.naver.data import (NaverDailyReader)
 from FinanceDataReader.nasdaq.listing import (NasdaqStockListing)
 from FinanceDataReader.krx.listing import (KrxStockListing)
 from FinanceDataReader.wikipedia.listing import (WikipediaStockListing)
+from FinanceDataReader.investing.listing import (InvestingEtfListing)
+from FinanceDataReader.naver.listing import (NaverEtfListing)
 
 import re
 
@@ -22,3 +24,8 @@ def StockListing(market):
     else:
         msg = "market=%s is not implemented" % market
         raise NotImplementedError(msg)
+
+def EtfListing(country='KR'):
+    if country.upper() == 'KR':
+        return NaverEtfListing().read()
+    return InvestingEtfListing(country).read()
