@@ -23,7 +23,7 @@ The main functions are as follows.
 # Install
 
 ```bash
-pip install finance_datareader
+pip install finance-datareader
 ```
 
 # Quick Start
