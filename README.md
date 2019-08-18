@@ -13,6 +13,13 @@ The main functions are as follows.
 * Exchanges: USD/KRX, USD/EUR, CNY/KRW ...
 * Cryptocurrency: BTC/USD (Bitfinex), BTC/KRW (Bithumb)
 
+주요 기능
+* 한국거래소(KRX)와 미국3대 거래소(NASDAQ, NYSE, AMEX) 전체 상장종목 리스팅 
+* S&P 500 전체 종목 리스팅 
+* 국가별 ETF 전체 종목 리스팅
+* 한국, 미국, 홍콩, 중국, 일본 개별종목및 ETF 가격 데이터
+* 각종 지수, 환율, 암호화폐, 상품, 선물 가격 데이터
+
 # Install
 
 ```bash
