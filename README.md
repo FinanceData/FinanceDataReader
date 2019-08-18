@@ -23,7 +23,12 @@ The main functions are as follows.
 # Install
 
 ```bash
-pip install finance-datareader
+$ pip install finance-datareader
+```
+FinanceDataReader가 이미 설치되어 있다면 다음과 같이 업그레이드 합니다.
+
+```bash
+$ pip install --upgrade finance-datareader
 ```
 
 # Quick Start
