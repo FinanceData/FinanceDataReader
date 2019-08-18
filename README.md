@@ -67,6 +67,7 @@ df_spx = fdr.StockListing('S&P500')
 
 ## Notes
 * All stock price of KRX is adjust price and date from year 1992<br>
-가격 데이터는 모두 수정가격(djust price)이며, 1992년 부터 현재까지 가격 데이터를 제공합니다
+가격 데이터는 모두 수정가격(djust price)이며, 1992년 부터 현재까지 가격 데이터를 제공합니다 <br>
+(한번에 5000개의 데이터를 가져옵니다. 10년 이상 데이터를 가져오려면 두번에 나누어 가져오십시오)
 
 #### 2018 [FinanceData.KR](http://financedata.kr)
