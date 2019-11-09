@@ -8,7 +8,7 @@ class NasdaqStockListing:
         self.market = market
         
     def read(self):
-        url = 'http://www.nasdaq.com/screening/companies-by-name.aspx?' \
+        url = 'http://old.nasdaq.com/screening/companies-by-name.aspx?' \
                 'letter=0&render=download&exchange=' + self.market.lower()
         df = pd.read_csv(url)
         df['MarketCap'] = df['MarketCap'].fillna('')

@@ -1,4 +1,5 @@
 
+
 # FinanceDataReader
 [FinanceData.KR](FinanceData.KR) Open Source Financial data reader
 
@@ -13,22 +14,10 @@ The main functions are as follows.
 * Exchanges: USD/KRX, USD/EUR, CNY/KRW ...
 * Cryptocurrency: BTC/USD (Bitfinex), BTC/KRW (Bithumb)
 
-주요 기능
-* 한국거래소(KRX)와 미국3대 거래소(NASDAQ, NYSE, AMEX) 전체 상장종목 리스팅 
-* S&P 500 전체 종목 리스팅 
-* 국가별 ETF 전체 종목 리스팅
-* 한국, 미국, 홍콩, 중국, 일본 개별종목및 ETF 가격 데이터
-* 각종 지수, 환율, 암호화폐, 상품, 선물 가격 데이터
-
 # Install
 
 ```bash
-$ pip install finance-datareader
-```
-FinanceDataReader가 이미 설치되어 있다면 다음과 같이 업그레이드 합니다.
-
-```bash
-$ pip install --upgrade finance-datareader
+pip install finance_datareader
 ```
 
 # Quick Start
@@ -82,9 +71,4 @@ df_spx = fdr.StockListing('S&P500')
 가격 데이터는 모두 수정가격(djust price)이며, 1992년 부터 현재까지 가격 데이터를 제공합니다 <br>
 (한번에 5000개의 데이터를 가져옵니다. 10년 이상 데이터를 가져오려면 두번에 나누어 가져오십시오)
 
-## buymeacoffee
-무료 오픈소스 FinanceDataReader 가 도움이 되셨다면 깃허브의 Star를 눌러 주세요. 아래 URL에서 후원도 하실 수 있습니다.
-
-https://www.buymeacoffee.com/siZa4t0
-
-#### 2018,2019 [FinanceData.KR](http://financedata.kr)
+#### 2018 [FinanceData.KR](http://financedata.kr)
