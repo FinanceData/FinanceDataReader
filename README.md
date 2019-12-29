@@ -60,7 +60,7 @@ df_spx = fdr.StockListing('S&P500')
 * [Users-Guide](https://github.com/FinanceData/FinanceDataReader/wiki/Users-Guide)
 * [Quick-Reference (Symbol List)](https://github.com/FinanceData/FinanceDataReader/wiki/Quick-Reference)
 
-## Tutirials
+## Tutorials
 * [Tutorial_01 수정주가](tutorial/FinanceDataReader_Tutorial_01_Adjusted_closing_price.ipynb)
 
 
