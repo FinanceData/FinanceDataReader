@@ -1,53 +1,58 @@
+from io import StringIO
+import json
 import requests
 import pandas as pd
-import json
-from io import StringIO
+from pandas.io.json import json_normalize
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
 class InvestingDailyReader:
-    def __init__(self, symbol, start=None, end=None, country=None):
+    def __init__(self, symbol, start=None, end=None, exchange=None, kind=None):
         self.symbol = symbol
         start, end = _validate_dates(start, end)
         self.start = start
         self.end = end
-        self.country = country
+        self.exchange = exchange
+        self.kind = kind
 
-    def _get_currid_investing(self, symbol, country):
-        predef_table = { # for exceptional case
-            'HSI': '179', # Hang Seng (HSI)
-        }
-        if symbol in predef_table.keys():
-            return predef_table[symbol]
-        
-        country_map = {'KR':'11', 'US':'5', 'CN':'37', 'HK':'39', 'JP':'35'}
-        if country:
-            country_id = country_map[country.upper()] if country in country_map.keys() else '0'
-        else:
-            country_id = '11' if symbol.isnumeric() else '0'
+    def _get_currid_investing(self, symbol, exchange=None, kind=None):
+        symbol = symbol.upper() if symbol else symbol
+        exchange = exchange.upper() if exchange else exchange
 
-        url = 'https://www.investing.com/search/service/search'
+        url = 'https://www.investing.com/search/service/searchTopBar'
         headers = {
             'User-Agent':'Mozilla',
             'X-Requested-With':'XMLHttpRequest',
         }
-
-        data = {
-            'search_text': symbol,
-            'term': symbol,
-            'country_id': country_id,
-            'tab_id': 'All',
+        
+        # Exchage alias
+        exchange_map = {
+            'KRX':'Seoul', '한국거래소':'Seoul',
+            'NASDAQ':'NASDAQ', '나스닥':'NASDAQ',
+            'NYSE':'NYSE', '뉴욕증권거래소':'NYSE', 
+            'AMEX':'AMEX',
+            'SSE':'Shanghai', '상하이':'Shanghai', '상해':'Shanghai',
+            'SZSE':'Shenzhen', '심천':'Shenzhen', 
+            'HKEX':'Hong Kong', '홍콩':'Hong Kong'
         }
+        exchange = exchange_map[exchange] if exchange and exchange in exchange_map.keys() else exchange
+    
+        data = {'search_text': symbol}
         r = requests.post(url, data=data, headers=headers)
         jo = json.loads(r.text)
-        for row in jo['All']:
-            if row['symbol'].upper() == symbol.upper():
-                return row['pair_ID']
-        return None
+        if len(jo['quotes']) == 0:
+            raise ValueError("Symbol('%s') not found" % symbol)
+        df = json_normalize(jo['quotes'])
+        df = df[df['exchange'].str.contains(exchange, case=False)] if exchange else df
+        df = df[df['type'].str.contains(kind + ' - ', case=False)] if kind else df
+
+        if len(df) == 0:
+            raise ValueError("Symbol('%s'), Exchange('%s'), kind('%s') not found" % (symbol, exchange, kind))
+        return df.iloc[0]['pairId']
 
     def read(self):
         start_date_str = self.start.strftime('%m/%d/%Y')
         end_date_str = self.end.strftime('%m/%d/%Y')
-        curr_id = self._get_currid_investing(self.symbol, self.country)
+        curr_id = self._get_currid_investing(self.symbol, self.exchange, self.kind)
         if not curr_id:
             raise ValueError("Symbol unsupported or not found")
 
