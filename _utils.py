@@ -16,7 +16,7 @@ def _validate_dates(start, end):
     end = to_datetime(end)
 
     if start is None:
-        start = datetime(2010, 1, 1)
+        start = datetime(1970, 1, 1)
     if end is None:
         end = datetime.today()
     return start, end
