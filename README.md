@@ -43,6 +43,9 @@ df = fdr.DataReader('000150', '2018-01-01', '2019-10-30', exchange='KRX') # KRX
 df = fdr.DataReader('000150', '2018-01-01', '2019-10-30', exchange='SZSE') # SZSE
 df = fdr.DataReader('000150', '2018-01-01', '2019-10-30', exchange='심천') # SZSE
 
+# KRX delisting stock data 상장폐지 종목 데이터 (상장일~상장폐지일)
+df = fdr.DataReader('036360', exchange='krx-delisting')
+
 # KOSPI index, 2015 ~ Now
 ks11 = fdr.DataReader('KS11', '2015-01-01')
 
@@ -58,7 +61,7 @@ btc = fdr.DataReader('BTC/KRW', '2016-01-01')
 # KRX stock symbol list and names
 krx = fdr.StockListing('KRX')
 
-# KRX stock delising symbol list and names
+# KRX stock delisting symbol list and names 상장폐지 종목 전체 리스트
 krx_delisting = fdr.StockListing('KRX-DELISTING')
 
 # S&P 500 symbol list
