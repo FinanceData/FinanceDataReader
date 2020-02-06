@@ -5,12 +5,11 @@ from io import StringIO
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
 class NaverDailyReader:
-    def __init__(self, symbol, start=None, end=None, country=None):
+    def __init__(self, symbol, start=None, end=None, exchange=None, kind=None):
         self.symbol = symbol
         start, end = _validate_dates(start, end)
         self.start = start
         self.end = end
-        self.country = country
 
     def read(self):
         url = 'https://fchart.stock.naver.com/sise.nhn?timeframe=day&count=6000&requestType=0&symbol='
