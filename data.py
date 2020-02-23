@@ -6,12 +6,14 @@ from FinanceDataReader.krx.listing import (KrxStockListing, KrxDelisting)
 from FinanceDataReader.wikipedia.listing import (WikipediaStockListing)
 from FinanceDataReader.investing.listing import (InvestingEtfListing)
 from FinanceDataReader.naver.listing import (NaverEtfListing)
+from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
 import re
 import pandas as pd
 from datetime import datetime, timedelta
 
 def DataReader(symbol, start=None, end=None, exchange=None, kind=None):
+    start, end = _validate_dates(start, end)
     if (symbol.isdigit() and len(symbol)==6 and exchange==None) or \
        (symbol.isdigit() and exchange and exchange.upper() in ['KRX', '한국거래소']):
         return NaverDailyReader(symbol, start, end, exchange, kind).read()

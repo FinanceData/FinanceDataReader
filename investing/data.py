@@ -18,6 +18,9 @@ class InvestingDailyReader:
         symbol = symbol.upper() if symbol else symbol
         exchange = exchange.upper() if exchange else exchange
 
+        # higher priority to KRX if exchange is None and symbol is digit
+        exchange = 'KRX' if exchange == None and symbol.isdigit() else exchange
+
         url = 'https://www.investing.com/search/service/searchTopBar'
         headers = {
             'User-Agent':'Mozilla',
@@ -29,21 +32,32 @@ class InvestingDailyReader:
             'KRX':'Seoul', '한국거래소':'Seoul',
             'NASDAQ':'NASDAQ', '나스닥':'NASDAQ',
             'NYSE':'NYSE', '뉴욕증권거래소':'NYSE', 
-            'AMEX':'AMEX',
-            'SSE':'Shanghai', '상하이':'Shanghai', '상해':'Shanghai',
-            'SZSE':'Shenzhen', '심천':'Shenzhen', 
-            'HKEX':'Hong Kong', '홍콩':'Hong Kong'
+            'AMEX':'AMEX', '미국증권거래소':'AMEX', 
+            'SSE':'Shanghai', '상해':'Shanghai', '상하이':'Shanghai',
+            'SZSE':'Shenzhen', '심천':'Shenzhen',
+            'HKEX':'Hong Kong', '홍콩':'Hong Kong',
+            'TSE':'Tokyo', '도쿄':'Tokyo',
         }
         exchange = exchange_map[exchange] if exchange and exchange in exchange_map.keys() else exchange
-    
+
+        symbol_map = {
+            'HSI': {'symbol': 'HK50', 'kind':'index'}
+        }
+        if symbol in symbol_map:
+            dic = symbol_map[symbol]
+            symbol = dic['symbol'] if 'symbol' in dic else symbol
+            exchange = dic['exchange'] if 'exchange' in dic else exchange
+            kind = dic['kind'] if 'kind' in dic else kind
+
         data = {'search_text': symbol}
         r = requests.post(url, data=data, headers=headers)
         jo = json.loads(r.text)
         if len(jo['quotes']) == 0:
             raise ValueError("Symbol('%s') not found" % symbol)
         df = json_normalize(jo['quotes'])
+        df = df[df['symbol'] == symbol]
         df = df[df['exchange'].str.contains(exchange, case=False)] if exchange else df
-        df = df[df['type'].str.contains(kind + ' - ', case=False)] if kind else df
+        df = df[df['type'].str.contains('^' + kind + ' - ', case=False)] if kind else df
 
         if len(df) == 0:
             raise ValueError("Symbol('%s'), Exchange('%s'), kind('%s') not found" % (symbol, exchange, kind))
