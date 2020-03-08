@@ -1,21 +1,54 @@
 import io
+import time
 import requests
 import pandas as pd
+from pandas.io.json import json_normalize
+import json
 
 class KrxStockListing:
     def __init__(self, market):
         self.market = market
     
     def read(self):
-        marketTypeMap = {'KRX':'', 'KOSPI':'stockMkt', 'KOSDAQ':'kosdaqMkt', 'KONEX':'konexMkt' }
-        url = 'http://kind.krx.co.kr/corpgeneral/corpList.do?' \
-                'method=download&searchType=13&marketType=' + marketTypeMap[self.market]
-        df = pd.read_html(url, header=0)[0]
-        df['종목코드'] = df['종목코드'].apply(lambda x: '{:06d}'.format(x))
-        df['상장일'] = pd.to_datetime(df['상장일'])
-        cols_ren = {'회사명':'Name', '종목코드':'Symbol', '업종':'Sector', '주요제품':'Industry'}
-        df = df.rename(columns = cols_ren)
-        return df[['Symbol', 'Name', 'Sector', 'Industry']]
+        # KRX 상장회사목록
+        url = 'http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13'
+        df_listing = pd.read_html(url, header=0)[0]
+        cols_ren = {'회사명':'Name', '종목코드':'Symbol', '업종':'Sector', '주요제품':'Industry', 
+                            '상장일':'ListingDate', '결산월':'SettleMonth',  '대표자명':'Representative', 
+                            '홈페이지':'HomePage', '지역':'Region', }
+        df_listing = df_listing.rename(columns = cols_ren)
+        df_listing['Symbol'] = df_listing['Symbol'].apply(lambda x: '{:06d}'.format(x))
+        df_listing['ListingDate'] = pd.to_datetime(df_listing['ListingDate'])
+        df_listing.head()
+
+        # KRX 주식종목검색
+        header_data = { 'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36', }
+
+        url_tmpl = 'http://marketdata.krx.co.kr/contents/COM/GenerateOTP.jspx?bld=COM%2Ffinder_stkisu&name=form&_={}' 
+        url = url_tmpl.format( int(time.time() * 1000) )
+        r = requests.get(url, headers=header_data)
+
+        down_url = 'http://marketdata.krx.co.kr/contents/MKD/99/MKD99000001.jspx'
+        down_data = {
+            'mktsel':'ALL',
+            'pagePath':'/contents/COM/FinderStkIsu.jsp',
+            'code': r.content,
+            'geFirstCall':'Y',
+        }
+        r = requests.post(down_url, down_data, headers=header_data)
+        jo = json.loads(r.text)
+        df_finder = json_normalize(jo, 'block1')
+        df_finder.columns = ['FullCode', 'ShortCode', 'Name', 'Market']
+        df_finder['Symbol'] = df_finder['ShortCode'].str[1:]
+
+        # 상장회사목록, 주식종목검색 병합
+        df_left = df_finder[['Symbol', 'Market', 'Name']]
+        df_right = df_listing[['Symbol', 'Sector', 'Industry', 'ListingDate', 'SettleMonth', 'Representative']]
+
+        df_master = pd.merge(df_left, df_right, how='left', left_on='Symbol', right_on='Symbol')
+        if self.market in ['KONEX', 'KOSDAQ', 'KOSPI']:
+            return df_master[df_master['Market'] == self.market] 
+        return df_master
 
 class KrxDelisting:
     def __init__(self, market):

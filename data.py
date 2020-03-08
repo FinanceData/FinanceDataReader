@@ -24,7 +24,7 @@ def DataReader(symbol, start=None, end=None, exchange=None, kind=None):
     reader = InvestingDailyReader
     df = reader(symbol, start, end, exchange, kind).read()
     end = min([pd.to_datetime(end), datetime.today()])
-    while df.index[-1] < end:
+    while len(df) and df.index[-1] < end: # issues/30
         more = reader(symbol, df.index[-1] + timedelta(1), end, exchange, kind).read()
         if len(more) == 0:
             break

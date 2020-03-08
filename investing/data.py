@@ -16,6 +16,7 @@ class InvestingDailyReader:
 
     def _get_currid_investing(self, symbol, exchange=None, kind=None):
         symbol = symbol.upper() if symbol else symbol
+        symbol = symbol.replace('^', '_p') # issues/29
         exchange = exchange.upper() if exchange else exchange
 
         # higher priority to KRX if exchange is None and symbol is digit
@@ -50,12 +51,12 @@ class InvestingDailyReader:
             kind = dic['kind'] if 'kind' in dic else kind
 
         data = {'search_text': symbol}
-        r = requests.post(url, data=data, headers=headers)
+        r = requests.post(url, data, headers=headers)
         jo = json.loads(r.text)
         if len(jo['quotes']) == 0:
-            raise ValueError("Symbol('%s') not found" % symbol)
+            raise ValueError("Symbol('%s'), Exchange('%s'), kind('%s') not found" % (symbol, exchange, kind))
         df = json_normalize(jo['quotes'])
-        df = df[df['symbol'] == symbol]
+        df = df[df['symbol'].str.lower() == symbol.lower()] ## issues/31
         df = df[df['exchange'].str.contains(exchange, case=False)] if exchange else df
         df = df[df['type'].str.contains('^' + kind + ' - ', case=False)] if kind else df
 
