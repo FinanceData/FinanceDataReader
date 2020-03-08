@@ -43,7 +43,7 @@ class KrxStockListing:
 
         # 상장회사목록, 주식종목검색 병합
         df_left = df_finder[['Symbol', 'Market', 'Name']]
-        df_right = df_listing[['Symbol', 'Sector', 'Industry', 'ListingDate', 'SettleMonth', 'Representative']]
+        df_right = df_listing[['Symbol', 'Sector', 'Industry', 'ListingDate', 'SettleMonth', 'Representative', 'HomePage', 'Region']]
 
         df_master = pd.merge(df_left, df_right, how='left', left_on='Symbol', right_on='Symbol')
         if self.market in ['KONEX', 'KOSDAQ', 'KOSPI']:
