@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 
 def DataReader(symbol, start=None, end=None, exchange=None, kind=None):
     start, end = _validate_dates(start, end)
-    if (symbol[:5].isdigit() and len(symbol)==6 and exchange==None) or \
+    if (symbol[:5].isdigit() and exchange==None) or \
        (symbol[:5].isdigit() and exchange and exchange.upper() in ['KRX', '한국거래소']):
         return NaverDailyReader(symbol, start, end, exchange, kind).read()
 
