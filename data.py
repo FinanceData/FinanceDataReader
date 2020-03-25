@@ -14,11 +14,11 @@ from datetime import datetime, timedelta
 
 def DataReader(symbol, start=None, end=None, exchange=None, kind=None):
     start, end = _validate_dates(start, end)
-    if (symbol.isdigit() and len(symbol)==6 and exchange==None) or \
-       (symbol.isdigit() and exchange and exchange.upper() in ['KRX', '한국거래소']):
+    if (symbol[:5].isdigit() and len(symbol)==6 and exchange==None) or \
+       (symbol[:5].isdigit() and exchange and exchange.upper() in ['KRX', '한국거래소']):
         return NaverDailyReader(symbol, start, end, exchange, kind).read()
 
-    if (symbol.isdigit() and exchange and exchange.upper() in ['KRX-DELISTING']):
+    if (symbol[:5].isdigit() and exchange and exchange.upper() in ['KRX-DELISTING']):
         return KrxDelistingReader(symbol, start, end, exchange, kind).read()
 
     reader = InvestingDailyReader
