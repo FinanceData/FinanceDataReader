@@ -2,7 +2,7 @@ import io
 import time
 import requests
 import pandas as pd
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 import json
 
 class KrxStockListing:
