@@ -2,7 +2,7 @@ from io import StringIO
 import json
 import requests
 import pandas as pd
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
 class InvestingDailyReader:
