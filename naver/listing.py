@@ -1,6 +1,6 @@
 import requests
 import json
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
