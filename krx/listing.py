@@ -79,4 +79,31 @@ class KrxDelisting:
         df['종목코드'] = df['종목코드'].str.replace('A', '')
         df['폐지일'] = pd.to_datetime(df['폐지일'])
         col_map = {'종목코드':'Symbol', '기업명':'Name', '폐지일':'DelistingDate', '폐지사유':'Reason'}
-        return df.rename(columns=col_map)        
+        return df.rename(columns=col_map)     
+    
+class KrxAdministrative:
+    def __init__(self, market):
+        self.market = market
+        
+    def read(self):
+        # STEP 01: Generate OTP
+        url = "http://global.krx.co.kr/contents/COM/GenerateOTP.jspx?"\
+            "name=fileDown&filetype=xls&url=GLB/05/0503/0503020100/glb0503020100&gubun=ALL&"\
+            "pagePath=%2Fcontents%2FGLB%2F05%2F0503%2F0503020100%2FGLB0503020100.jsp"
+        
+        header_data = {'User-Agent': 'Chrome/78 Safari/537'}
+        r = requests.get(url, headers=header_data)
+        
+        # STEP 02: download
+        url = 'http://file.krx.co.kr/download.jspx'
+        form_data = {'code': r.text}
+        header_data = {
+            'Referer': 'http://global.krx.co.kr/contents/GLB/05/0503/0503020100/GLB0503020100.jsp',
+            'User-Agent': 'Chrome/78 Safari/537',
+        }
+        r = requests.post(url, form_data, headers=header_data)
+        dfx = pd.read_excel(io.BytesIO(r.content), thousands=',')
+        dfx['Designation Date'] = pd.to_datetime(dfx['Designation Date'])
+        dfx['Cause for designation'] = dfx['Cause for designation'].str.replace("&apos;", "'")
+        drop_col = ['Current Price(KRW)','Change','Change.1','Trading Volume(shr.)','Trading Value(KRW)']
+        return dfx.drop(drop_col, axis=1)
