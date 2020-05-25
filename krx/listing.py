@@ -86,24 +86,10 @@ class KrxAdministrative:
         self.market = market
         
     def read(self):
-        # STEP 01: Generate OTP
-        url = "http://global.krx.co.kr/contents/COM/GenerateOTP.jspx?"\
-            "name=fileDown&filetype=xls&url=GLB/05/0503/0503020100/glb0503020100&gubun=ALL&"\
-            "pagePath=%2Fcontents%2FGLB%2F05%2F0503%2F0503020100%2FGLB0503020100.jsp"
-        
-        header_data = {'User-Agent': 'Chrome/78 Safari/537'}
-        r = requests.get(url, headers=header_data)
-        
-        # STEP 02: download
-        url = 'http://file.krx.co.kr/download.jspx'
-        form_data = {'code': r.text}
-        header_data = {
-            'Referer': 'http://global.krx.co.kr/contents/GLB/05/0503/0503020100/GLB0503020100.jsp',
-            'User-Agent': 'Chrome/78 Safari/537',
-        }
-        r = requests.post(url, form_data, headers=header_data)
-        dfx = pd.read_excel(io.BytesIO(r.content), thousands=',')
-        dfx['Designation Date'] = pd.to_datetime(dfx['Designation Date'])
-        dfx['Cause for designation'] = dfx['Cause for designation'].str.replace("&apos;", "'")
-        drop_col = ['Current Price(KRW)','Change','Change.1','Trading Volume(shr.)','Trading Value(KRW)']
-        return dfx.drop(drop_col, axis=1)
+        url = "http://kind.krx.co.kr/investwarn/adminissue.do?method=searchAdminIssueSub&currentPageSize=5000&forward=adminissue_down"
+        df = pd.read_html(url, header=0)[0]
+        df['종목코드'] = df['종목코드'].apply(lambda x: '{:0>6d}'.format(x))
+        df['지정일'] = pd.to_datetime(df['지정일'])
+        col_map = {'종목코드':'Symbol', '종목명':'Name', '지정일':'DesignationDate', '지정사유':'Reason'}
+        df.rename(columns=col_map, inplace=True)    
+        return df[['Symbol', 'Name', 'DesignationDate', 'Reason']]
