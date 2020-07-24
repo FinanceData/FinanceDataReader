@@ -4,17 +4,20 @@ import requests
 import pandas as pd
 from pandas import json_normalize
 import json
+import ssl
 
 class KrxStockListing:
     def __init__(self, market):
         self.market = market
-    
+
     def read(self):
         # KRX 상장회사목록
+        # For mac, SSL CERTIFICATION VERIFICATION ERROR
+        ssl._create_default_https_context = ssl._create_unverified_context
         url = 'http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13'
         df_listing = pd.read_html(url, header=0)[0]
-        cols_ren = {'회사명':'Name', '종목코드':'Symbol', '업종':'Sector', '주요제품':'Industry', 
-                            '상장일':'ListingDate', '결산월':'SettleMonth',  '대표자명':'Representative', 
+        cols_ren = {'회사명':'Name', '종목코드':'Symbol', '업종':'Sector', '주요제품':'Industry',
+                            '상장일':'ListingDate', '결산월':'SettleMonth',  '대표자명':'Representative',
                             '홈페이지':'HomePage', '지역':'Region', }
         df_listing = df_listing.rename(columns = cols_ren)
         df_listing['Symbol'] = df_listing['Symbol'].apply(lambda x: '{:06d}'.format(x))
@@ -24,7 +27,7 @@ class KrxStockListing:
         # KRX 주식종목검색
         header_data = { 'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36', }
 
-        url_tmpl = 'http://marketdata.krx.co.kr/contents/COM/GenerateOTP.jspx?bld=COM%2Ffinder_stkisu&name=form&_={}' 
+        url_tmpl = 'http://marketdata.krx.co.kr/contents/COM/GenerateOTP.jspx?bld=COM%2Ffinder_stkisu&name=form&_={}'
         url = url_tmpl.format( int(time.time() * 1000) )
         r = requests.get(url, headers=header_data)
 
@@ -47,7 +50,7 @@ class KrxStockListing:
 
         df_master = pd.merge(df_left, df_right, how='left', left_on='Symbol', right_on='Symbol')
         if self.market in ['KONEX', 'KOSDAQ', 'KOSPI']:
-            return df_master[df_master['Market'] == self.market] 
+            return df_master[df_master['Market'] == self.market]
         return df_master
 
 class KrxDelisting:
@@ -79,4 +82,12 @@ class KrxDelisting:
         df['종목코드'] = df['종목코드'].str.replace('A', '')
         df['폐지일'] = pd.to_datetime(df['폐지일'])
         col_map = {'종목코드':'Symbol', '기업명':'Name', '폐지일':'DelistingDate', '폐지사유':'Reason'}
-        return df.rename(columns=col_map)        
+        return df.rename(columns=col_map)
+
+def main():
+    krxstocklisting = KrxStockListing('KOSPI')
+    print(krxstocklisting.read())
+    return
+
+if __name__ == "__main__":
+    main()
