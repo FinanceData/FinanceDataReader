@@ -108,6 +108,12 @@ krx_delisting = fdr.StockListing('KRX-DELISTING')
 # KRX stock delisting symbol list and names 관리종목 리스트
 krx_adm = fdr.StockListing('KRX-ADMINISTRATIVE') # 관리종목
 
+
+# FRED 데이터
+m2 = fdr.DataReader('M2', data_source='fred') #  M2통화량
+nq = fdr.DataReader('NASDAQCOM', data_source='fred') # NASDAQCOM 나스닥종합지수
+hou_nas = fdr.DataReader(['HSN1F', 'NASDAQCOM'], data_source='fred') # HSN1F 주택판매지수, NASDAQCOM 나스닥종합지수 
+
 ```
 
 ## Using FinanceDataReader
