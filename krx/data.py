@@ -4,7 +4,7 @@ from io import BytesIO
 from datetime import datetime
 
 class KrxDelistingReader:
-    def __init__(self, symbol, start=None, end=None, exchange=None, kind=None):
+    def __init__(self, symbol, start=None, end=None, exchange=None, data_source=None):
         self.symbol = symbol
         self.start = datetime(1990,1,1) if start==None else pd.to_datetime(start)
         self.end = datetime(2100,1,1) if end==None else pd.to_datetime(end)

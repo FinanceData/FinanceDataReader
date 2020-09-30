@@ -5,7 +5,7 @@ from io import StringIO
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
 class NaverDailyReader:
-    def __init__(self, symbol, start=None, end=None, exchange=None, kind=None):
+    def __init__(self, symbol, start=None, end=None, exchange=None, data_source=None):
         self.symbol = symbol
         start, end = _validate_dates(start, end)
         self.start = start

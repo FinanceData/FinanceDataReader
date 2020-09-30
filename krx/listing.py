@@ -2,8 +2,13 @@ import io
 import time
 import requests
 import pandas as pd
-from pandas import json_normalize
 import json
+import ssl
+
+try:
+    from pandas import json_normalize
+except ImportError:
+    from pandas.io.json import json_normalize
 
 class KrxStockListing:
     def __init__(self, market):
@@ -11,6 +16,9 @@ class KrxStockListing:
     
     def read(self):
         # KRX 상장회사목록
+        # For mac, SSL CERTIFICATION VERIFICATION ERROR
+        ssl._create_default_https_context = ssl._create_unverified_context
+        
         url = 'http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13'
         df_listing = pd.read_html(url, header=0)[0]
         cols_ren = {'회사명':'Name', '종목코드':'Symbol', '업종':'Sector', '주요제품':'Industry', 
@@ -49,6 +57,7 @@ class KrxStockListing:
         if self.market in ['KONEX', 'KOSDAQ', 'KOSPI']:
             return df_master[df_master['Market'] == self.market] 
         return df_master
+    
 
 class KrxDelisting:
     def __init__(self, market):
@@ -79,12 +88,13 @@ class KrxDelisting:
         df['종목코드'] = df['종목코드'].str.replace('A', '')
         df['폐지일'] = pd.to_datetime(df['폐지일'])
         col_map = {'종목코드':'Symbol', '기업명':'Name', '폐지일':'DelistingDate', '폐지사유':'Reason'}
-        return df.rename(columns=col_map)     
+        return df.rename(columns=col_map)
     
+
 class KrxAdministrative:
     def __init__(self, market):
         self.market = market
-        
+
     def read(self):
         url = "http://kind.krx.co.kr/investwarn/adminissue.do?method=searchAdminIssueSub&currentPageSize=5000&forward=adminissue_down"
         df = pd.read_html(url, header=0)[0]
@@ -92,4 +102,4 @@ class KrxAdministrative:
         df['지정일'] = pd.to_datetime(df['지정일'])
         col_map = {'종목코드':'Symbol', '종목명':'Name', '지정일':'DesignationDate', '지정사유':'Reason'}
         df.rename(columns=col_map, inplace=True)    
-        return df[['Symbol', 'Name', 'DesignationDate', 'Reason']]
+        return df[['Symbol', 'Name', 'DesignationDate', 'Reason']]    

@@ -2,72 +2,63 @@ from io import StringIO
 import json
 import requests
 import pandas as pd
-from pandas import json_normalize
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
+try:
+    from pandas import json_normalize
+except ImportError:
+    from pandas.io.json import json_normalize
+
 class InvestingDailyReader:
-    def __init__(self, symbol, start=None, end=None, exchange=None, kind=None):
+    def __init__(self, symbol, start=None, end=None, exchange=None, data_source=None):
         self.symbol = symbol
         start, end = _validate_dates(start, end)
         self.start = start
         self.end = end
         self.exchange = exchange
-        self.kind = kind
+        self.data_source = data_source
 
-    def _get_currid_investing(self, symbol, exchange=None, kind=None):
-        symbol = symbol.upper() if symbol else symbol
-        symbol = symbol.replace('^', '_p') # issues/29
-        exchange = exchange.upper() if exchange else exchange
+    def _get_currid_investing(self, symbol, exchange=None, data_source=None):
+        symbol = symbol.upper()
 
-        # higher priority to KRX if exchange is None and symbol is digit
-        exchange = 'KRX' if exchange == None and symbol.isdigit() else exchange
-
-        url = 'https://www.investing.com/search/service/searchTopBar'
+        url = 'https://kr.investing.com/search/service/searchTopBar'
         headers = {
             'User-Agent':'Mozilla',
             'X-Requested-With':'XMLHttpRequest',
         }
-        
-        # Exchage alias
-        exchange_map = {
-            'KRX':'Seoul', '한국거래소':'Seoul',
-            'NASDAQ':'NASDAQ', '나스닥':'NASDAQ',
-            'NYSE':'NYSE', '뉴욕증권거래소':'NYSE', 
-            'AMEX':'AMEX', '미국증권거래소':'AMEX', 
-            'SSE':'Shanghai', '상해':'Shanghai', '상하이':'Shanghai',
-            'SZSE':'Shenzhen', '심천':'Shenzhen',
-            'HKEX':'Hong Kong', '홍콩':'Hong Kong',
-            'TSE':'Tokyo', '도쿄':'Tokyo',
-        }
-        exchange = exchange_map[exchange] if exchange and exchange in exchange_map.keys() else exchange
-
-        symbol_map = {
-            'HSI': {'symbol': 'HK50', 'kind':'index'}
-        }
-        if symbol in symbol_map:
-            dic = symbol_map[symbol]
-            symbol = dic['symbol'] if 'symbol' in dic else symbol
-            exchange = dic['exchange'] if 'exchange' in dic else exchange
-            kind = dic['kind'] if 'kind' in dic else kind
-
-        data = {'search_text': symbol}
-        r = requests.post(url, data, headers=headers)
+        r = requests.post(url, data={'search_text': symbol}, headers=headers)
         jo = json.loads(r.text)
         if len(jo['quotes']) == 0:
-            raise ValueError("Symbol('%s'), Exchange('%s'), kind('%s') not found" % (symbol, exchange, kind))
+            raise ValueError(f"Symbol('{symbol}') not found")
         df = json_normalize(jo['quotes'])
-        df = df[df['symbol'].str.lower() == symbol.lower()] ## issues/31
-        df = df[df['exchange'].str.contains(exchange, case=False)] if exchange else df
-        df = df[df['type'].str.contains('^' + kind + ' - ', case=False)] if kind else df
+        df['symbol'] = df['symbol'].str.upper()
+
+        # filter symbol
+        df = df.query(f'symbol=="{symbol}"', engine='python')
+
+        # filter exchange
+        if exchange:
+            exchange_map = {
+                'KRX':'서울', '한국거래소':'서울',
+                'NYSE':'뉴욕', '뉴욕증권거래소':'뉴욕', 
+                'NASDAQ':'나스닥',
+                '미국증권거래소':'AMEX', 
+                'SSE':'상하이', '상해':'상하이',
+                'SZSE':'심천',
+                'HKEX':'홍콩',
+                'TSE':'도쿄',
+            }
+            exchange = exchange_map[exchange] if exchange in exchange_map.keys() else exchange
+            df = df.query(f'exchange.str.contains("{exchange}", case=False)', engine='python')
 
         if len(df) == 0:
-            raise ValueError("Symbol('%s'), Exchange('%s'), kind('%s') not found" % (symbol, exchange, kind))
+            raise ValueError(f"Symbol('{symbol}'), Exchange('{exchange}') not found")
         return df.iloc[0]['pairId']
 
     def read(self):
         start_date_str = self.start.strftime('%m/%d/%Y')
         end_date_str = self.end.strftime('%m/%d/%Y')
-        curr_id = self._get_currid_investing(self.symbol, self.exchange, self.kind)
+        curr_id = self._get_currid_investing(self.symbol, self.exchange, self.data_source)
         if not curr_id:
             raise ValueError("Symbol unsupported or not found")
 
