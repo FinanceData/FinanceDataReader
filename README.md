@@ -6,16 +6,16 @@ The FinanceDataReader is financial data reader(crawler) for finance. <br>
 The main functions are as follows.
 
 * KRX Stock Symbol listings: 'KRX', 'KOSPI', 'KODAQ', 'KONEX'
-* US Stock Symbol listings: 'NASDAQ', 'NYSE', 'AMEX' and 'S&P500'
-* Symbol listings: 
-* KRX delistings: 'KRX-DELISTING'
+* Global Stock Symbol listings: 'NASDAQ', 'NYSE', 'AMEX' and 'S&P500', 'SSE'(상해), 'SZSE'(심천), 'HKEX'(홍콩), 'TSE'(도쿄)
+* KRX delistings: 'KRX-DELISTING'(상장폐지종목), 'KRX-ADMINISTRATIVE' (관리종목)
 * ETF Symbol listings(for multiple countries): 'KR', 'US', 'JP'
 * Stock price(KRX): '005930'(Samsung), '091990'(Celltrion Healthcare) ...
 * Stock price(Word wide): 'AAPL', 'AMZN', 'GOOG' ... (you can specify exchange(market) and symbol)
-* Indexes: 'KOSPI', 'KOSDAQ', 'DJI', 'IXIC', 'US500'(S&P 500) ...
-* Exchanges: 'USD/KRX', 'USD/EUR', 'CNY/KRW' ...
+* Indexes: 'KS11'(코스피지수), 'KQ11'(코스닥지수), 'DJI'(다우존스지수), 'IXIC'(나스닥지수), 'US500'(S&P 500지수) ...
+* Exchanges: 'USD/KRX', 'USD/EUR', 'CNY/KRW' ... (조합가능한 화폐별 환율 데이터 일자별)
 * Cryptocurrency price data: 'BTC/USD' (Bitfinex), 'BTC/KRW' (Bithumb)
 
+    
 # Install
 
 ```bash
@@ -106,7 +106,7 @@ stocks = fdr.StockListing('HOSE') # 호치민 증권거래소
 krx_delisting = fdr.StockListing('KRX-DELISTING')
 
 # KRX stock delisting symbol list and names 관리종목 리스트
-krx_adm = fdr.StockListing('krx-administrative') # 관리종목
+krx_adm = fdr.StockListing('KRX-ADMINISTRATIVE') # 관리종목
 
 ```
 
