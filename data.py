@@ -2,7 +2,7 @@ from FinanceDataReader.investing.data import (InvestingDailyReader)
 from FinanceDataReader.krx.data import (KrxDelistingReader)
 from FinanceDataReader.naver.data import (NaverDailyReader)
 from FinanceDataReader.nasdaq.listing import (NasdaqStockListing)
-from FinanceDataReader.krx.listing import (KrxStockListing, KrxDelisting)
+from FinanceDataReader.krx.listing import (KrxStockListing, KrxDelisting, KrxAdministrative)
 from FinanceDataReader.wikipedia.listing import (WikipediaStockListing)
 from FinanceDataReader.investing.listing import (InvestingEtfListing)
 from FinanceDataReader.naver.listing import (NaverEtfListing)
@@ -39,6 +39,8 @@ def StockListing(market):
         return KrxStockListing(market).read()
     if market in [ 'KRX-DELISTING' ]:
         return KrxDelisting(market).read()
+    if market in [ 'KRX-ADMINISTRATIVE' ]:
+        return KrxAdministrative(market).read()
     if market in [ 'S&P500', 'SP500']:
         return WikipediaStockListing(market).read()
     else:

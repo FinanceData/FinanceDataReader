@@ -79,4 +79,17 @@ class KrxDelisting:
         df['종목코드'] = df['종목코드'].str.replace('A', '')
         df['폐지일'] = pd.to_datetime(df['폐지일'])
         col_map = {'종목코드':'Symbol', '기업명':'Name', '폐지일':'DelistingDate', '폐지사유':'Reason'}
-        return df.rename(columns=col_map)        
+        return df.rename(columns=col_map)     
+    
+class KrxAdministrative:
+    def __init__(self, market):
+        self.market = market
+        
+    def read(self):
+        url = "http://kind.krx.co.kr/investwarn/adminissue.do?method=searchAdminIssueSub&currentPageSize=5000&forward=adminissue_down"
+        df = pd.read_html(url, header=0)[0]
+        df['종목코드'] = df['종목코드'].apply(lambda x: '{:0>6d}'.format(x))
+        df['지정일'] = pd.to_datetime(df['지정일'])
+        col_map = {'종목코드':'Symbol', '종목명':'Name', '지정일':'DesignationDate', '지정사유':'Reason'}
+        df.rename(columns=col_map, inplace=True)    
+        return df[['Symbol', 'Name', 'DesignationDate', 'Reason']]
