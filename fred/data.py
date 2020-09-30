@@ -23,6 +23,7 @@ class FredReader:
         else:
             start_str = self.start.strftime("%Y-%m-%d")
             end_str = self.end.strftime("%Y-%m-%d")
+            sym = self.symbol
 
         url = f'https://fred.stlouisfed.org/graph/fredgraph.csv?id={sym}&cosd={start_str}&coed={end_str}'
         r = requests.get(url)
