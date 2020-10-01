@@ -50,6 +50,18 @@ df = fdr.DataReader('000150', '2018-01-01', '2019-10-30', exchange='KRX') # KRX 
 df = fdr.DataReader('000150', '2018-01-01', '2019-10-30', exchange='SZSE') # SZSE
 df = fdr.DataReader('000150', '2018-01-01', '2019-10-30', exchange='심천') # SZSE
 
+# TSE (도쿄증권거래소)
+fdr.DataReader('7203', '2020-01-01', exchange='TSE') # 토요타 자동차(7203)
+fdr.DataReader('7203', '2020-01-01', exchange='TSE') # 소프트뱅크그룹(7203)
+
+# HOSE (호치민증권거래소)
+fdr.DataReader('VCB', '2020-01-01', exchange='HOSE') # 베트남 무역은행(VCB)
+fdr.DataReader('VIC', '2020-01-01', exchange='HOSE') # Vingroup (JSC)
+
+# AMEX(아메리카증권거래소)
+fdr.DataReader('LNG', '2020-01-01', exchange='AMEX') # Cheniere Energy (LNG)
+fdr.DataReader('CBOE', '2020-01-01', exchange='AMEX') # Cboe Global Markets (CBOE)
+
 # KRX delisting stock data 상장폐지된 종목 가격 데이터 (상장일~상장폐지일)
 df = fdr.DataReader('036360', exchange='KRX-DELISTING')
 
