@@ -42,11 +42,12 @@ class InvestingDailyReader:
                 'KRX':'서울', '한국거래소':'서울',
                 'NYSE':'뉴욕', '뉴욕증권거래소':'뉴욕', 
                 'NASDAQ':'나스닥',
-                '미국증권거래소':'AMEX', 
+                'AMEX': '뉴욕', 
                 'SSE':'상하이', '상해':'상하이',
                 'SZSE':'심천',
                 'HKEX':'홍콩',
                 'TSE':'도쿄',
+                'HOSE':'Ho Chi Minh',
             }
             exchange = exchange_map[exchange] if exchange in exchange_map.keys() else exchange
             df = df.query(f'exchange.str.contains("{exchange}", case=False)', engine='python')
