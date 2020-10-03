@@ -27,8 +27,6 @@ pip install finance-datareader
 ```python
 import FinanceDataReader as fdr
 
-# 지원하는 거래소: KRX(한국거래소), NYSE, NASDAQ, AMEX, SSE(상해), SZSE(심천), HKEX(홍콩), TSE(도쿄)
-
 # 삼성전자(005930) 전체 (1996-11-05 ~ 현재)
 df = fdr.DataReader('005930')
 
