@@ -1,4 +1,5 @@
 import requests
+import json
 import pandas as pd
 from io import BytesIO
 from datetime import datetime
@@ -10,43 +11,45 @@ class KrxDelistingReader:
         self.end = datetime(2100,1,1) if end==None else pd.to_datetime(end)
 
     def read(self):
-        # STEP 01: Generate OTP
-        url = "http://marketdata.krx.co.kr/contents/COM/GenerateOTP.jspx"
-        form_data = {
-            'name':'fileDown',
-            'filetype':'xls',
-            'url':'MKD/04/0406/04060300/mkd04060300',
-            'isu_srt_cd':'A' + self.symbol,
-            'fromdate': self.start.strftime("%Y%m%d"),
-            'todate': self.end.strftime("%Y%m%d"),
-            'pagePath':'/contents/MKD/04/0406/04060300/MKD04060300.jsp',
-        }
-        header_data = {
-            'User-Agent': 'Chrome/78 Safari/537',
-        }
-        r = requests.post(url, data=form_data, headers=header_data)
-        # STEP 02: download
-        url = 'http://file.krx.co.kr/download.jspx'
-        form_data = {
-            'code': r.text,
+        headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',}
+        data = {
+            'mktsel': 'ALL',
+            'searchText': '',
+            'bld': 'dbms/comm/finder/finder_listdelisu',
         }
 
-        header_data = {
-            'Referer': 'http://marketdata.krx.co.kr/',
-            'User-Agent': 'Chrome/78 Safari/537',
-        }
-        r = requests.post(url, form_data, headers=header_data)
-        dfx = pd.read_excel(BytesIO(r.content), thousands=',')
-        dfx['일자'] = pd.to_datetime(dfx['일자'])
+        url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
+        r = requests.post(url, data, headers=headers)
+        j = json.loads(r.text)
+        df = pd.json_normalize(j['block1'])
+        df = df.set_index('short_code')
+        full_code = df.loc[self.symbol]['full_code']
 
-        col_map = {'일자':'Date', '종가':'Close', '등락구분코드':'UpDown', '대비':'Change', 
-                    '거래량':'Volume', '거래대금':'Amount', 
-                    '시가':'Open', '고가':'High', '저가':'Low', 
-                    '기준가':'StandardPrice', '상장주식수':'Stocks', '액면가':'FaceValue', 
-                    '통화구분':'Currency', '거래정지\r여부':'StopOrder', '관리종목\r여부':'Issues' }
-        dfx.rename(columns=col_map, inplace=True)
-        dfx.set_index('Date', inplace=True)
-        dfx.sort_index(inplace=True)
-        use_cols = ['Open', 'High', 'Low', 'Close', 'Volume', 'Change', 'Amount', 'Stocks', 
-                    'FaceValue', 'StandardPrice', 'StopOrder', 'Issues']
-        return dfx[use_cols]
+        data = {
+            'bld': 'dbms/MDC/STAT/issue/MDCSTAT23902',
+            'isuCd': full_code,
+            'isuCd2': '',
+            'strtDd': self.start.strftime("%Y%m%d"),
+            'endDd': self.end.strftime("%Y%m%d"),
+            'share': '1',
+            'money': '1',
+            'csvxls_isNo': 'false',
+        }
+
+        url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
+        r = requests.post(url, data, headers=headers)
+        j = json.loads(r.text)
+        df = pd.json_normalize(j['output'])
+        col_map = {'TRD_DD':'Date', 'ISU_CD':'Code', 'ISU_NM':'Name', 'MKT_NM':'Market', 
+                   'SECUGRP_NM':'SecuGroup', 'TDD_CLSPRC':'Close', 'FLUC_TP_CD':'UpDown', 
+                   'CMPPRVDD_PRC':'Change', 'FLUC_RT':'ChangeRate', 
+                   'TDD_OPNPRC':'Open', 'TDD_HGPRC':'High', 'TDD_LWPRC':'Lower', 
+                   'ACC_TRDVOL':'Volume', 'ACC_TRDVAL':'Amount', 'MKTCAP':'MarCap'}
+
+        df = df.rename(columns=col_map)
+        df['Date'] = pd.to_datetime(df['Date'])
+        int_cols = ['Close', 'UpDown', 'Change', 'Open', 'High', 'Lower', 'Volume', 'Amount', 'MarCap']
+        for col in int_cols: 
+            df[col] = pd.to_numeric(df[col].str.replace(',', ''), errors='coerce')
+        df['ChangeRate'] = pd.to_numeric(df['ChangeRate'])
+        return df

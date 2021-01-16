@@ -27,27 +27,16 @@ class KrxStockListing:
         df_listing = df_listing.rename(columns = cols_ren)
         df_listing['Symbol'] = df_listing['Symbol'].apply(lambda x: '{:06d}'.format(x))
         df_listing['ListingDate'] = pd.to_datetime(df_listing['ListingDate'])
-        df_listing.head()
 
         # KRX 주식종목검색
-        header_data = { 'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36', }
+        data = {'bld': 'dbms/comm/finder/finder_stkisu',}
+        r = requests.post('http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd', data=data)
 
-        url_tmpl = 'http://marketdata.krx.co.kr/contents/COM/GenerateOTP.jspx?bld=COM%2Ffinder_stkisu&name=form&_={}' 
-        url = url_tmpl.format( int(time.time() * 1000) )
-        r = requests.get(url, headers=header_data)
-
-        down_url = 'http://marketdata.krx.co.kr/contents/MKD/99/MKD99000001.jspx'
-        down_data = {
-            'mktsel':'ALL',
-            'pagePath':'/contents/COM/FinderStkIsu.jsp',
-            'code': r.content,
-            'geFirstCall':'Y',
-        }
-        r = requests.post(down_url, down_data, headers=header_data)
         jo = json.loads(r.text)
         df_finder = json_normalize(jo, 'block1')
-        df_finder.columns = ['FullCode', 'ShortCode', 'Name', 'Market']
-        df_finder['Symbol'] = df_finder['ShortCode'].str[1:]
+        
+        # full_code, short_code, codeName, marketCode, marketName, marketEngName, ord1, ord2
+        df_finder.columns = ['FullCode', 'Symbol', 'Name', 'MarketCode', 'MarketName', 'Market', 'Ord1', 'Ord2']
 
         # 상장회사목록, 주식종목검색 병합
         df_left = df_finder[['Symbol', 'Market', 'Name']]
@@ -56,39 +45,45 @@ class KrxStockListing:
         df_master = pd.merge(df_left, df_right, how='left', left_on='Symbol', right_on='Symbol')
         if self.market in ['KONEX', 'KOSDAQ', 'KOSPI']:
             return df_master[df_master['Market'] == self.market] 
-        return df_master
-    
+        return df_master    
 
 class KrxDelisting:
     def __init__(self, market):
         self.market = market
 
     def read(self):
-        # STEP 01: Generate OTP
-        url = 'http://marketdata.krx.co.kr/contents/COM/GenerateOTP.jspx?' \
-            'name=fileDown&filetype=xls&url=MKD/04/0406/04060600/mkd04060600&' \
-            'market_gubun=ALL&isu_cdnm=%EC%A0%84%EC%B2%B4&isu_cd=&isu_nm=&' \
-            'isu_srt_cd=&fromdate=19900101&todate=22001231&del_cd=1&' \
-            'pagePath=%2Fcontents%2FMKD%2F04%2F0406%2F04060600%2FMKD04060600.jsp'
-
-        header_data = {
-            'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+        data = {
+            'bld': 'dbms/MDC/STAT/issue/MDCSTAT23801',
+            'mktId': 'ALL',
+            'isuCd': 'ALL',
+            'isuCd2': 'ALL',
+            'strtDd': '19900101',
+            'endDd': '22001231',
+            'share': '1',
+            'csvxls_isNo': 'true',
         }
-        r = requests.get(url, headers=header_data)
 
-        # STEP 02: download
-        url = 'http://file.krx.co.kr/download.jspx'
-        form_data = {'code': r.text}
-        header_data = {
-            'Referer': 'http://marketdata.krx.co.kr/contents/MKD/04/0406/04060600/MKD04060600.jsp',
-            'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
-        }
-        r = requests.post(url, data=form_data, headers=header_data)
-        df = pd.read_excel(io.BytesIO(r.content))
-        df['종목코드'] = df['종목코드'].str.replace('A', '')
-        df['폐지일'] = pd.to_datetime(df['폐지일'])
-        col_map = {'종목코드':'Symbol', '기업명':'Name', '폐지일':'DelistingDate', '폐지사유':'Reason'}
-        return df.rename(columns=col_map)
+        headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',}
+
+        url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
+        r = requests.post(url, data, headers=headers)
+        j = json.loads(r.text)
+        df = pd.json_normalize(j['output'])
+        col_map = {'ISU_CD':'Symbol', 'ISU_NM':'Name', 'MKT_NM':'Market', 
+                   'SECUGRP_NM':'SecuGroup', 'KIND_STKCERT_TP_NM':'Kind',
+                   'LIST_DD': 'ListingDate', 'DELIST_DD':'DelistingDate', 'DELIST_RSN_DSC':'Reason', 
+                   'ARRANTRD_MKTACT_ENFORCE_DD':'ArrantEnforceDate', 'ARRANTRD_END_DD':'ArrantEndDate', 
+                   'IDX_IND_NM':'Industry', 'PARVAL':'ParValue', 'LIST_SHRS':'ListingShares', 
+                   'TO_ISU_SRT_CD':'ToSymbol', 'TO_ISU_ABBRV':'ToName' }
+
+        df = df.rename(columns=col_map)
+        df['ListingDate'] = pd.to_datetime(df['ListingDate'], format='%Y/%m/%d')
+        df['DelistingDate'] = pd.to_datetime(df['DelistingDate'], format='%Y/%m/%d')
+        df['ArrantEnforceDate'] = pd.to_datetime(df['ArrantEnforceDate'], format='%Y/%m/%d', errors='coerce')
+        df['ArrantEndDate'] = pd.to_datetime(df['ArrantEndDate'], format='%Y/%m/%d', errors='coerce')
+        df['ParValue'] = pd.to_numeric(df['ParValue'].str.replace(',', ''), errors='coerce')
+        df['ListingShares'] = pd.to_numeric(df['ListingShares'].str.replace(',', ''), errors='coerce')
+        return df
     
 
 class KrxAdministrative:
