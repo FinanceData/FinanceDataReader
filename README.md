@@ -124,6 +124,22 @@ m2 = fdr.DataReader('M2', data_source='fred') #  M2통화량
 nq = fdr.DataReader('NASDAQCOM', data_source='fred') # NASDAQCOM 나스닥종합지수
 hou_nas = fdr.DataReader(['HSN1F', 'NASDAQCOM'], data_source='fred') # HSN1F 주택판매지수, NASDAQCOM 나스닥종합지수 
 
+# 캔들차트 그리기
+df = fdr.DataReader('005930', '2021-01-01', '2021-02-15')
+
+fdr.chart.plot(df)
+fdr.chart.plot(df, title='삼성전자(005930)')
+
+# 차트 설정
+config = {'title':'fdr.chart.config()를 사용하여 설정을 한번에 지정할 수 있습니다', 
+          'width': 600, 
+          'height': 300,
+          'volume': True,
+}
+
+fdr.chart.config(config=config)
+fdr.chart.plot(df)
+
 ```
 
 ## Using FinanceDataReader
