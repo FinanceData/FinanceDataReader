@@ -1,6 +1,8 @@
 import io
 import time
+from datetime import datetime, timedelta
 import requests
+import numpy as np
 import pandas as pd
 import json
 import ssl
@@ -84,8 +86,43 @@ class KrxDelisting:
         df['ParValue'] = pd.to_numeric(df['ParValue'].str.replace(',', ''), errors='coerce')
         df['ListingShares'] = pd.to_numeric(df['ListingShares'].str.replace(',', ''), errors='coerce')
         return df
-    
 
+class KrxMarcapListing:
+    def __init__(self, market):
+        self.market = market
+
+    def read(self):
+        url = 'http://data.krx.co.kr/comm/bldAttendant/executeForResourceBundle.cmd?baseName=krx.mdc.i18n.component&key=B128.bld'
+        j = json.loads(requests.get(url).text)
+        date_str = j['result']['output'][0]['max_work_dt']
+        
+        url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
+        data = {
+            'bld': 'dbms/MDC/STAT/standard/MDCSTAT01501',
+            'mktId': 'ALL',
+            'trdDd': date_str,
+            'share': '1',
+            'money': '1',
+            'csvxls_isNo': 'false',
+        }
+        j = json.loads(requests.post(url, data).text)
+        df = pd.json_normalize(j['OutBlock_1'])
+        df = df.replace(',', '', regex=True)
+        numeric_cols = ['CMPPREVDD_PRC', 'FLUC_RT', 'TDD_OPNPRC', 'TDD_HGPRC', 'TDD_LWPRC', 
+                        'ACC_TRDVOL', 'ACC_TRDVAL', 'MKTCAP', 'LIST_SHRS'] 
+        df[numeric_cols] = df[numeric_cols].apply(pd.to_numeric, errors='coerce')
+        
+        df = df.sort_values('MKTCAP', ascending=False)
+        cols_map = {'ISU_SRT_CD':'Code', 'ISU_ABBRV':'Name', 
+                    'TDD_CLSPRC':'Close', 'SECT_TP_NM': 'Dept', 'FLUC_TP_CD':'ChangeCode', 
+                    'CMPPREVDD_PRC':'Changes', 'FLUC_RT':'ChagesRatio', 'ACC_TRDVOL':'Volume', 
+                    'ACC_TRDVAL':'Amount', 'TDD_OPNPRC':'Open', 'TDD_HGPRC':'High', 'TDD_LWPRC':'Low',
+                    'MKTCAP':'Marcap', 'LIST_SHRS':'Stocks', 'MKT_NM':'Market', 'MKT_ID': 'MarketId' }
+        df = df.rename(columns=cols_map)
+        df.index = np.arange(len(df)) + 1
+        return df
+
+    
 class KrxAdministrative:
     def __init__(self, market):
         self.market = market
