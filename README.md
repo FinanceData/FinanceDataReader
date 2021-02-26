@@ -88,8 +88,8 @@ btc = fdr.DataReader('BTC/KRW', '2016-01-01')
 df = fdr.DataReader('KR1YT=RR') # 1년만기 한국국채 수익률
 df = fdr.DataReader('KR10YT=RR') # 10년만기 한국국채 수익률
 
-df = fdr.DataReader('US1MT=RR') # 1개월 만기 미국국채 수익률
-df = fdr.DataReader('US10YT=RR') # 10년 만기 미국국채 수익률
+df = fdr.DataReader('US1MT=X') # 1개월 만기 미국국채 수익률
+df = fdr.DataReader('US10YT=X') # 10년 만기 미국국채 수익률
 
 # KRX stock symbol list
 stocks = fdr.StockListing('KRX') # 코스피, 코스닥, 코넥스 전체
