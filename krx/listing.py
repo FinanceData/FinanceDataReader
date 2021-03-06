@@ -38,7 +38,16 @@ class KrxStockListing:
         df_finder = json_normalize(jo, 'block1')
         
         # full_code, short_code, codeName, marketCode, marketName, marketEngName, ord1, ord2
-        df_finder.columns = ['FullCode', 'Symbol', 'Name', 'MarketCode', 'MarketName', 'Market', 'Ord1', 'Ord2']
+        df_finder = df_finder.rename(columns={
+                        'full_code': 'FullCode',
+                        'short_code': 'Symbol',
+                        'codeName': 'Name',
+                        'marketCode': 'MarketCode',
+                        'marketName': 'MarketName',
+                        'marketEngName': 'Market',
+                        'ord1': 'Ord1',
+                        'ord2': 'Ord2',
+                    })
 
         # 상장회사목록, 주식종목검색 병합
         df_left = df_finder[['Symbol', 'Market', 'Name']]
