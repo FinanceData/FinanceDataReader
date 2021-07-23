@@ -27,7 +27,7 @@ class InvestingDailyReader:
             'X-Requested-With':'XMLHttpRequest',
         }
         r = requests.post(url, data={'search_text': symbol}, headers=headers)
-        jo = json.loads(r.text)
+        jo = r.json()
         if len(jo['quotes']) == 0:
             raise ValueError(f"Symbol('{symbol}') not found")
         df = json_normalize(jo['quotes'])
