@@ -54,12 +54,12 @@ class InvestingDailyReader:
 
         if len(df) == 0:
             raise ValueError(f"Symbol('{symbol}'), Exchange('{exchange}') not found")
-        return df.iloc[0]['pairId']
+        return df.iloc[0]['pairId'], df.iloc[0]['industry']
 
     def read(self):
         start_date_str = self.start.strftime('%m/%d/%Y')
         end_date_str = self.end.strftime('%m/%d/%Y')
-        curr_id = self._get_currid_investing(self.symbol, self.exchange, self.data_source)
+        curr_id, exp_syms = self._get_currid_investing(self.symbol, self.exchange, self.data_source)
         if not curr_id:
             raise ValueError("Symbol unsupported or not found")
 
@@ -93,7 +93,7 @@ class InvestingDailyReader:
         if 'Volume' in df.columns:
             df['Volume'] = df['Volume'].apply(_convert_letter_to_num)
         df = df.sort_index()
-        exp_syms = ['US500', 'RUTNU', 'VIX', ] # exceptial symbols (vol == 0)
-        if 'Volume' in df.columns and self.symbol not in exp_syms:
+        
+        if 'Volume' in df.columns and exp_syms != 0:
             df = df[df['Volume'] > 0]
         return df
