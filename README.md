@@ -1,5 +1,5 @@
 # FinanceDataReader
-[FinanceData.KR](FinanceData.KR) Open Source Financial data reader
+[FinanceData.KR](https://financedata.github.io/) Open Source Financial data reader
 
 # Overview
 The FinanceDataReader is financial data reader(crawler) for finance. <br>
