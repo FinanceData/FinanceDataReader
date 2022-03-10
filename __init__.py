@@ -3,6 +3,6 @@ from .data import (StockListing)
 from .data import (EtfListing)
 from . import (chart)
 
-__version__ = '0.9.30'
+__version__ = '0.9.32'
 
 __all__ = ['__version__', 'DataReader', 'StockListing', 'EtfListing', 'chart']
