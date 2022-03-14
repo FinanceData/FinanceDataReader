@@ -57,7 +57,7 @@ def plot(df, start=None, end=None, **kwargs):
     * df: DataFrame to plot
     * start(default: None)
     * end(default: None)
-    * recent_high: display recent high price befre n-days (if recent_high == -1 plot plot recent high yesterday)
+    * recent_high: display recent high price befre n-days (if recent_high == -1 then plot recent high yesterday)
     '''
     try:
         from bokeh.plotting import figure, gridplot
@@ -87,7 +87,7 @@ def plot(df, start=None, end=None, **kwargs):
             df[f'MA_{n}'] = df.Close.rolling(n).apply(lambda prices: np.dot(prices, weights[:n])/weights[:n].sum())
         elif ma_type.upper() == 'EMA':
             df[f'MA_{n}'] = df.Close.ewm(span=n).mean()
-        elif ma_type.upper() == 'None':
+        elif ma_type.upper() == 'NONE':
             pass
         else:
             raise ValueError(f"moving_average_type '{ma_type}' is invalid")
