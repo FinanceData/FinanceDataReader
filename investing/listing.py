@@ -18,7 +18,7 @@ class InvestingEtfListing:
             msg = "country unsupported. support countries:" + str(list(country_map.keys()))
             raise ValueError(msg)
 
-        headers = { 'User-Agent':'Mozilla', }
+        headers = { 'User-Agent':'Mozilla/5.0 (Macintosh) AppleWebKit/537.36 Chrome/98.0.4758.109', }
         url = 'https://kr.investing.com/etfs/' + country_map[self.country] + '-etfs'
         r = requests.get(url, headers=headers)
 
