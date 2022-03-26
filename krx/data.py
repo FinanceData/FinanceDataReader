@@ -51,5 +51,11 @@ class KrxDelistingReader:
         int_cols = ['Close', 'UpDown', 'Change', 'Open', 'High', 'Lower', 'Volume', 'Amount', 'MarCap']
         for col in int_cols: 
             df[col] = pd.to_numeric(df[col].str.replace(',', ''), errors='coerce')
-        df['ChangeRate'] = pd.to_numeric(df['ChangeRate'])
+        
+        # df['ChangeRate'] = pd.to_numeric(df['ChangeRate'])
+        #### to deal with parse string error such as < ValueError: Unable to parse string "2,946.15" >
+        from pandas.api.types import is_string_dtype
+        if is_string_dtype(df['ChangeRate']):
+            df['ChangeRate'] = pd.to_numeric(df['ChangeRate'].str.replace(',', ''), errors='coerce')
+        
         return df
