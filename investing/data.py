@@ -1,4 +1,5 @@
 from io import StringIO
+from datetime import datetime, timedelta
 import json
 import requests
 import pandas as pd
@@ -54,12 +55,12 @@ class InvestingDailyReader:
 
         if len(df) == 0:
             raise ValueError(f"Symbol('{symbol}'), Exchange('{exchange}') not found")
-        return df.iloc[0]['pairId'], df.iloc[0]['industry']
+        return df.iloc[0]['pairId']
 
     def read(self):
         start_date_str = self.start.strftime('%m/%d/%Y')
         end_date_str = self.end.strftime('%m/%d/%Y')
-        curr_id, exp_syms = self._get_currid_investing(self.symbol, self.exchange, self.data_source)
+        curr_id = self._get_currid_investing(self.symbol, self.exchange, self.data_source)
         if not curr_id:
             raise ValueError("Symbol unsupported or not found")
 
@@ -80,6 +81,11 @@ class InvestingDailyReader:
         }
 
         r = requests.post(url, data, headers=headers)
+        if r.status_code == 429: # too many requests
+            secs = int(r.headers['Retry-After'])
+            msg = f'HTTP {r.status_code} error. Retry after {secs} seconds ({str(timedelta(seconds=secs))})'
+            print(msg)
+            return pd.DataFrame()
         dfs = pd.read_html(StringIO(r.text))
         df = dfs[0]
         if (len(df)==0) or ("No results found" == df.iloc[0]['Date']):
@@ -93,7 +99,7 @@ class InvestingDailyReader:
         if 'Volume' in df.columns:
             df['Volume'] = df['Volume'].apply(_convert_letter_to_num)
         df = df.sort_index()
-        
-        if 'Volume' in df.columns and exp_syms != 0:
+        exp_syms = ['US500', 'RUTNU', 'VIX', ] # exceptial symbols (vol == 0)
+        if 'Volume' in df.columns and self.symbol not in exp_syms:
             df = df[df['Volume'] > 0]
         return df

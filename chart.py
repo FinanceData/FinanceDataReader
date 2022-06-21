@@ -36,7 +36,7 @@ bokeh not installed please install as follows
 FinanceDataReade.chart.plot()는 bokeh에 의존성이 있습니다.
 명령창에서 다음과 같이 bokeh를 설치하세요
 
-pip insatll bokeh
+pip install bokeh
 '''
 
 def config(**kwargs):
