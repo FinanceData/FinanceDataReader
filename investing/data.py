@@ -99,7 +99,7 @@ class InvestingDailyReader:
         if 'Volume' in df.columns:
             df['Volume'] = df['Volume'].apply(_convert_letter_to_num)
         df = df.sort_index()
-        exp_syms = ['US500', 'RUTNU', 'VIX', ] # exceptial symbols (vol == 0)
+        exp_syms = ['US500', 'RUTNU', 'VIX', 'T', ] # exceptional symbols (vol == 0)
         if 'Volume' in df.columns and self.symbol not in exp_syms:
             df = df[df['Volume'] > 0]
         return df
