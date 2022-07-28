@@ -17,7 +17,6 @@ release = '0.9.34'
 extensions = ['sphinx_rtd_theme', 'myst_parser']
 source_suffix = {
     '.rst': 'restructuredtext',
-    '.txt': 'markdown',
     '.md': 'markdown',
 }
 
