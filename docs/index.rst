@@ -1,4 +1,4 @@
-FinanceDataReader 
+FinanceDataReader
 =====================
 FinanceDataReader, The Ultimate Financial Data Reader
 
@@ -91,7 +91,7 @@ Release
 - StockListing, SP500 (S&P 500 Listings, wikipedia), 추가
 
 2018-05-16 v0.1.0
-- StockListing KRX, KOSPI, KODAQ, KONEX, 추가 
+- StockListing KRX, KOSPI, KODAQ, KONEX, 추가
 - StockListing NASDAQ, NYSE, AMEX, 추가
 
 2018-05-14 v0.0.1
@@ -111,11 +111,11 @@ license
 MIT license를 따릅니다
 
 
-찾아보기 
+찾아보기
 ==================
 * :ref:`genindex`
 * :ref:`search`
 
 
-2018 FinanceData.KR http://financedata.kr
+2022 FinanceData.KR http://financedata.kr
 

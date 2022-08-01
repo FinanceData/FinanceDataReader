@@ -4,7 +4,7 @@
 거래소 별로 상장종목 목록을 가져옵니다
 
 .. code-block:: python
-	
+
 	df = fdr.StockListing('KRX')
 	df
 
@@ -15,7 +15,7 @@
 심볼            거래소                      비고
 ==============  ======================  =============================
 KRX             KRX 종목 전체               KOSPI,KOSDAQ,KONEX 모두
-KOSPI           KOSPI 종목        
+KOSPI           KOSPI 종목
 KOSDAQ          KOSDAQ 종목
 KONEX           KONEX 종목
 KONEX           KONEX 종목
