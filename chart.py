@@ -5,158 +5,132 @@
 
 import numpy as np
 import pandas as pd
+import pandas_ta as ta
+import plotly.io as pio
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 from datetime import datetime, timedelta
- 
-__fact_def_params = {  # factory default params
-    'width': 800,
-    'height': 480,
-    'volume_height': 0.3, # 30% size of figure height
-    'recent_high': False,
-    'volume': True,
-    'title': '',
-    'ylabel': '',
-    'moving_average_type': 'SMA',  # 'SMA', 'WMA', 'EMA'
-    'moving_average_lines': (5, 20, 60),
-    'color_up': 'red',
-    'color_down': 'blue',
-    'color_volume_up': 'red', 
-    'color_volume_down': 'blue',
-}
 
-__plot_params = dict(__fact_def_params)
+pio.templates.default = "plotly_white"
 
-# tableau 10 colors for moving_average_lines
-tab_colors =['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 
-             'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
 
-bokeh_install_msg = '''
-FinanceDataReade.chart.plot() dependen on bokeh
-bokeh not installed please install as follows
-
-FinanceDataReade.chart.plot()는 bokeh에 의존성이 있습니다.
-명령창에서 다음과 같이 bokeh를 설치하세요
-
-pip install bokeh
-'''
-
-def config(**kwargs):
-    global __plot_params
-    
-    for key,value in kwargs.items():
-        if key.lower()=='reset' and value:
-            __plot_params = dict(__fact_def_params)
-        elif key=='config':
-            for k,v in value.items():
-                __plot_params[k] = v
-        else:
-            __plot_params[key] = value
-
-def plot(df, start=None, end=None, **kwargs):
-    '''
-    plot candle chart with 'df'(DataFrame) from 'start' to 'end'
-    * df: DataFrame to plot
-    * start(default: None)
-    * end(default: None)
-    * recent_high: display recent high price befre n-days (if recent_high == -1 then plot recent high yesterday)
-    '''
-    try:
-        from bokeh.plotting import figure, gridplot
-        from bokeh.models import NumeralTickFormatter, DatetimeTickFormatter, Span
-        from bokeh.io import output_notebook, show, export_png
-        from bokeh.palettes import d3
-    except ModuleNotFoundError as e:
-        raise ModuleNotFoundError(bokeh_install_msg)
-
-    params = dict(__plot_params)
-    for key,value in kwargs.items():
-        if key == 'config':
-            for key,value in kwargs.items():
-                params[key] = value
-        else:
-            params[key] = value
+def plot(df: pd.DataFrame, start: str = None, end: str = None, indicators: list = None, **kwargs):
 
     df = df.loc[start:end].copy()
-    
-    ma_type = params['moving_average_type']
-    weights = np.arange(240) + 1
 
-    for n in params['moving_average_lines']: # moving average lines
-        if ma_type.upper() == 'SMA':
-            df[f'MA_{n}'] = df.Close.rolling(window=n).mean()
-        elif ma_type.upper() == 'WMA':
-            df[f'MA_{n}'] = df.Close.rolling(n).apply(lambda prices: np.dot(prices, weights[:n])/weights[:n].sum())
-        elif ma_type.upper() == 'EMA':
-            df[f'MA_{n}'] = df.Close.ewm(span=n).mean()
-        elif ma_type.upper() == 'NONE':
-            pass
+    # 1. 기술적 지표에 대한 데이터프레임 만들기
+    for indicator in indicators:
+        if indicator in dir(df.ta):
+            continue
         else:
-            raise ValueError(f"moving_average_type '{ma_type}' is invalid")
-
-    inc = df.Close > df.Open
-    dec = df.Open > df.Close
-
-    output_notebook()
-    
-    # plot price OHLC candles
-    x = np.arange(len(df))
-    height = params['height']
-    if params['volume']:
-        height = int(params['height'] - params['height'] * params['volume_height'])
-    pp = figure(plot_width=params['width'], 
-                plot_height=height,
-                x_range=(-1, min(120, len(df))),
-                y_range=(df.Low.min(), df.High.max()),
-                title=params['title'],
-                y_axis_label=params['ylabel'])
-    
-    pp.segment(x[inc], df.High[inc], x[inc], df.Low[inc], color=params['color_up'])
-    pp.segment(x[dec], df.High[dec], x[dec], df.Low[dec], color=params['color_down'])
-    pp.vbar(x[inc], 0.8, df.Open[inc], df.Close[inc], fill_color=params['color_up'], line_color=params['color_up'])
-    pp.vbar(x[dec], 0.8, df.Open[dec], df.Close[dec], fill_color=params['color_down'], line_color=params['color_down'])
-    pp.yaxis[0].formatter = NumeralTickFormatter(format='0,0')
-        
-    if params['volume']:
-        pp.xaxis.visible = False
+            raise AttributeError(f"indicator {indicator} is invalid")
     else:
-        x_labels = {i: dt.strftime('%Y-%m-%d') for i,dt in enumerate(df.index)}
-        x_labels.update({len(df): ''})
-        pp.xaxis.major_label_overrides = x_labels
-        pp.xaxis.formatter=DatetimeTickFormatter(hours=["%H:%M"], days=["%Y-%m-%d"])
-        pp.xaxis.major_label_orientation = np.pi / 5
-        
-    for ix,n in enumerate(params['moving_average_lines']):
-        pal = d3['Category10'][10]
-        pp.line(x, df[f'MA_{n}'], line_color=pal[ix % len(pal)])
+        df = calculate_indicator_value(df, indicators)
 
-    if params['recent_high']:
-        to = df.index.max() + timedelta(days=params['recent_high'])
-        hline = Span(location=df.Close[:to].max(), dimension='width', line_dash='dashed', line_color='gray', line_width=2)
-        pp.renderers.extend([hline])
+    # 2. 각 기술적 지표에 대한 데이터프레임에 맞는 Chart 그림 그리기.
+    # plotly_chart(df)
+    plotly_chart(df, n=len(indicators))
 
-    # plot volume
-    if params['volume']:
-        inc = df.Volume.diff() >= 0
-        dec = df.Volume.diff() < 0
+    # 3. 어노테이션
 
-        height = int(params['height'] * params['volume_height'])
-        pv = figure(plot_width=params['width'], plot_height=height, x_range = pp.x_range)
 
-        pv.vbar(x[inc], 0.8, df.Volume[inc], fill_color=params['color_volume_up'], line_color="black")
-        pv.vbar(x[dec], 0.8, df.Volume[dec], fill_color=params['color_volume_down'], line_color="black")
+def calculate_indicator_value(df: pd.DataFrame, indicators: list) -> pd.DataFrame:
 
-        pv.yaxis[0].formatter = NumeralTickFormatter(format='0,0')
-        x_labels = {i: dt.strftime('%Y-%m-%d') for i,dt in enumerate(df.index)}
-        x_labels.update({len(df): ''})
-        pv.xaxis.major_label_overrides = x_labels
-        pv.xaxis.formatter=DatetimeTickFormatter(hours=["%H:%M"], days=["%Y-%m-%d"])
-        pv.xaxis.major_label_orientation = np.pi / 5
-        pv.y_range.range_padding = 0
+    for indicator in indicators:
+        df = pd.concat([df, getattr(df.ta, indicator)()], axis=1)
 
-        # 가격(pp)과 거래량(pv) 함께 그리기
-        p = gridplot([[pp], [pv]])
-    else:
-        p = gridplot([[pp]])
-    show(p)
+    return df
+
+
+def plotly_chart(df: pd.DataFrame, n: int = 2):
+
+    # n x 1 형태의 subplot 세팅하기
+    fig = plotly_subplot(n)
+
+    # defalut setting. OHLC + Volumne
+    fig.add_trace(plotly_candlestick(df), row=1, col=1)
+    fig.add_trace(plotly_bar(df), row=2, col=1)
+
+    # # 추가되는 indicator마다 차트 그려주기. 각 지표마다 시각화하는 방식이 다를 수 있음을 고려
+    # chart_for_each_indicator = {}
+    # for indicator in indicators:
+    #     fig.add_trace(plotly_scatter(df, ))
+
+    plotly_xaxes(df, fig)
+    plotly_yaxes(df, fig)
+
+    fig.show()
+
+
+def plotly_subplot(rows: int = 2, cols: int = 1):
+
+    fig = make_subplots(rows=rows,
+                        cols=cols,
+                        shared_xaxes=True,
+                        vertical_spacing=0.03,
+                        row_width=[0.3] + [0.7/rows for _ in range(1, rows)]
+                        )
+
+    return fig
+
+
+def plotly_candlestick(df: pd.DataFrame, config: dict = None):
+
+    trace = go.Candlestick(x=df.index,
+                           open=df["Open"],
+                           high=df["High"],
+                           low=df["Low"],
+                           close=df["Close"],
+                           increasing_line_color='red', increasing_fillcolor='red',
+                           decreasing_line_color='blue', decreasing_fillcolor='blue'
+                           )
+    return trace
+
+
+def plotly_bar(df: pd.DataFrame, config: dict = None):
+
+    trace = go.Bar(x=df.index,
+                   y=df['Volume'],
+                   showlegend=False,
+                   marker_color=list(
+                       map(lambda x: "red" if x else "blue", df.Volume.diff() >= 0))
+                   )
+
+    return trace
+
+
+def plotly_scatter(df: pd.DataFrame, config: dict = None):
+    pass
+
+
+def plotly_xaxes(df, fig):
+    # Hide no trading days
+    fig.update_xaxes(
+        tickangle=-45,
+        tickformat='%Y-%m-%d',
+        ticks="outside",
+        minor_ticks="outside",
+        linecolor='black',
+        showgrid=True,
+        rangeslider_visible=False,
+        rangebreaks=[
+            dict(values=pd.date_range(
+                df.index[1], df.index[-1]).difference(df.index))
+        ]
+    )
+
+
+def plotly_yaxes(df, fig):
+
+    fig.update_yaxes(
+        ticks="outside",
+        minor_ticks="outside",
+        linecolor='black',
+        exponentformat="none",
+        showgrid=True
+    )
+
+
+def plotly_layout(df, fig):
+    pass
     
-    if 'save' in kwargs:
-        export_png(p, filename=kwargs['save'])
