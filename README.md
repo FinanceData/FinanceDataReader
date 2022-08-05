@@ -50,7 +50,7 @@ df = fdr.DataReader('000150', '2018-01-01', '2019-10-30', exchange='심천') # S
 
 # TSE (도쿄증권거래소)
 fdr.DataReader('7203', '2020-01-01', exchange='TSE') # 토요타 자동차(7203)
-fdr.DataReader('7203', '2020-01-01', exchange='TSE') # 소프트뱅크그룹(7203)
+fdr.DataReader('9984', '2020-01-01', exchange='TSE') # 소프트뱅크그룹(9984)
 
 # HOSE (호치민증권거래소)
 fdr.DataReader('VCB', '2020-01-01', exchange='HOSE') # 베트남 무역은행(VCB)
