@@ -2,8 +2,6 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
-import pdb
-
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
 class InvestingEtfListing:
