@@ -2,6 +2,8 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
+import pdb
+
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
 class InvestingEtfListing:
@@ -29,9 +31,10 @@ class InvestingEtfListing:
         trs = table.tbody.find_all('tr')
         for tr in trs:
             tds = tr.find_all('td')
-            data_id = tds[1].span['data-id']
+            spans = tds[1].find_all('span')
+            data_id = spans[1].get('data-id')
             sym = tds[2].text
-            name = tds[1].a.text
+            name = tds[1].text
             values.append([sym, name])
 
         df = pd.DataFrame(values, columns=['Symbol', 'Name'])  
