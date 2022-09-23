@@ -18,7 +18,6 @@ KRX             KRX 종목 전체               KOSPI,KOSDAQ,KONEX 모두
 KOSPI           KOSPI 종목
 KOSDAQ          KOSDAQ 종목
 KONEX           KONEX 종목
-KONEX           KONEX 종목
 NASDAQ          나스닥 종목
 NYSE            뉴욕 증권거래소 종목
 AMEX            AMEX 종목
