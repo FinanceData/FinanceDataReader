@@ -22,7 +22,7 @@ class KrxStockListing:
         ssl._create_default_https_context = ssl._create_unverified_context
         
         url = 'http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13'
-        df_listing = pd.read_html(url, header=0)[0]
+        df_listing = pd.read_html(url, header=0, flavor='bs4', encoding='EUC-KR')[0]
         cols_ren = {'회사명':'Name', '종목코드':'Symbol', '업종':'Sector', '주요제품':'Industry', 
                             '상장일':'ListingDate', '결산월':'SettleMonth',  '대표자명':'Representative', 
                             '홈페이지':'HomePage', '지역':'Region', }
