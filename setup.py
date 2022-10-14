@@ -9,7 +9,7 @@ with codecs.open(os.path(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name             = 'finance-datareader',
-    version          = '0.9.40',
+    version          = '0.9.34',
     description      = 'The FinanceDataReader is financial data reader(crawler) for finance.',
     long_description = long_description,
     author           = 'plusjune',

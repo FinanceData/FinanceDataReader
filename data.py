@@ -44,7 +44,7 @@ def DataReader(symbol, start=None, end=None, exchange=None, data_source=None):
         more = reader(symbol, df.index[-1] + timedelta(1), end, exchange, data_source).read()
         if len(more) == 0:
             break
-        df = pd.concat([df, more])
+        df = df.append(more)
     return df
 
 def StockListing(market):
