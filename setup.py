@@ -9,14 +9,14 @@ with codecs.open(os.path(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='finance-datareader',
-    version='0.9.43',
+    version='0.9.42',
     description='The FinanceDataReader is financial data reader(crawler) for finance.',
     long_description=long_description,
     author='plusjune',
     author_email='plusjune@financedata.kr',
     url='https://github.com/financedata-org/FinanceDataReader',
     download_url='https://github.com/financedata-org/FinanceDataReader/archive/master.zip',
-    install_requires=['bokeh', 'matplotlib==3.2.2', 'cloudscraper==1.2.64'],
+    install_requires=['bokeh', 'plotly', 'backtrader', 'matplotlib==3.2.2'],
     packages=find_packages(exclude=['docs', 'tutorial']),
     keywords=['trading', 'development', 'stock', 'data-analysis'],
     python_requires='>=3',
