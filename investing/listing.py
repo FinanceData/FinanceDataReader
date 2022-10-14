@@ -29,9 +29,8 @@ class InvestingEtfListing:
         trs = table.tbody.find_all('tr')
         for tr in trs:
             tds = tr.find_all('td')
-            data_id = tds[1].span['data-id']
             sym = tds[2].text
-            name = tds[1].a.text
+            name = tds[1].text
             values.append([sym, name])
 
         df = pd.DataFrame(values, columns=['Symbol', 'Name'])  
