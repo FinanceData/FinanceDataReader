@@ -25,13 +25,11 @@ pip install finance-datareader
 ```
 
 # Quick Start
+지원하는 거래소: KRX(한국거래소), NYSE(뉴욕증권거래소), NASDAQ(나스닥), AMEX(아멕스), SSE(상해), SZSE(심천), HKEX(홍콩), TSE(도쿄)
 
 ```python
 
 import FinanceDataReader as fdr
-
-# 지원하는 거래소: 
-# KRX(한국거래소), NYSE(뉴욕증권거래소), NASDAQ(나스닥), AMEX(아멕스), SSE(상해), SZSE(심천), HKEX(홍콩), TSE(도쿄)
 
 # KOSPI Index 코스피 지수 데이터 
 df = fdr.DataReader('KS11') # 전체(1996 ~ 현재)
