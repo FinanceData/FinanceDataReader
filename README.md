@@ -30,7 +30,8 @@ pip install finance-datareader
 
 import FinanceDataReader as fdr
 
-# 지원하는 거래소: KRX(한국거래소), NYSE(뉴욕증권거래소), NASDAQ(나스닥), AMEX(아멕스), SSE(상해), SZSE(심천), HKEX(홍콩), TSE(도쿄)
+# 지원하는 거래소: 
+# KRX(한국거래소), NYSE(뉴욕증권거래소), NASDAQ(나스닥), AMEX(아멕스), SSE(상해), SZSE(심천), HKEX(홍콩), TSE(도쿄)
 
 # KOSPI Index 코스피 지수 데이터 
 df = fdr.DataReader('KS11') # 전체(1996 ~ 현재)
@@ -120,9 +121,9 @@ df = fdr.DataReader('US30YT') # 30년 만기 미국국채 수익률
 # 종목 리스팅 (종목수는 2022년 10월 25일 기준, 시장 규모 가늠 용도)
 # KRX 상장회사(발행회사)목록 (가격 중심, 주식 종목) - 시가총액순
 stocks = fdr.StockListing('KRX') # KRX: 2,663 종목(=코스피+코스닥+코넥스)
-stocks = fdr.StockListing('KOSPI') # KOSPI: 940 종목 (주식 926, 부동산투자회사 12, 선박투자회사 1, 주식예탁증권 1)
-stocks = fdr.StockListing('KOSDAQ') # KOSDAQ: 1,597 종목 (주식 1,589, 주식예탁증권 8)
-stocks = fdr.StockListing('KONEX') # KONEX: 126 종목 (주식 126)
+stocks = fdr.StockListing('KOSPI') # KOSPI: 940 종목
+stocks = fdr.StockListing('KOSDAQ') # KOSDAQ: 1,597 종목
+stocks = fdr.StockListing('KONEX') # KONEX: 126 종목
 
 # KRX 전종목 목록 (설명 중심, 주식+펀드등 전종목)
 stocks = fdr.StockListing('KRX-DESC') # 한국거래소: 7,632 종목
