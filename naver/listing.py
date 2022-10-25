@@ -13,9 +13,6 @@ from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 __tqdm_msg = '''
 tqdm not installed. please install as follows
 
-시간이 오래 걸리는 작업을 진행을 표시하기 위해 tqdm 에 의존성이 있습니다.
-다음과 같이 tqdm를 설치하세요
-
 C:\> pip insatll tqdm
 '''
 

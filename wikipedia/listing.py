@@ -10,5 +10,5 @@ class WikipediaStockListing:
         cols_ren = {'Security':'Name', 'Ticker symbol':'Symbol', 'GICS Sector':'Sector', 'GICS Sub-Industry':'Industry'}
         df = df.rename(columns = cols_ren)
         df = df[['Symbol', 'Name', 'Sector', 'Industry']]
-        df['Symbol'] = df['Symbol'].str.replace('\.', '')
+        df['Symbol'] = df['Symbol'].str.replace('.', '', regex=False)
         return df
