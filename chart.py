@@ -102,8 +102,8 @@ def plot(df, start=None, end=None, **kwargs):
     height = params['height']
     if params['volume']:
         height = int(params['height'] - params['height'] * params['volume_height'])
-    pp = figure(plot_width=params['width'], 
-                plot_height=height,
+    pp = figure(width=params['width'], 
+                height=height,
                 x_range=(-1, min(120, len(df))),
                 y_range=(df.Low.min(), df.High.max()),
                 title=params['title'],
