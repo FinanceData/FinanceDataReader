@@ -118,6 +118,9 @@ krx_delisting = fdr.StockListing('KRX-DELISTING')
 # KRX stock delisting symbol list and names 관리종목 리스트
 krx_adm = fdr.StockListing('KRX-ADMINISTRATIVE') # 관리종목
 
+# ETF 데이터
+kr_etf = fdr.StockListing('ETF/KR') # 한국 ETF
+
 
 # FRED 데이터
 m2 = fdr.DataReader('M2', data_source='fred') #  M2통화량
