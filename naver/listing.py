@@ -1,19 +1,15 @@
 import requests
 from bs4 import BeautifulSoup
 import json
+from json.decoder import JSONDecodeError
 import pandas as pd
-
-try:
-    from pandas import json_normalize
-except ImportError:
-    from pandas.io.json import json_normalize
 
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
 __tqdm_msg = '''
 tqdm not installed. please install as follows
 
-C:\> pip insatll tqdm
+pip install tqdm
 '''
 
 class NaverStockListing:
@@ -66,7 +62,7 @@ class NaverStockListing:
                 print(r.text)
                 raise Exception(f'{r.status_code} "{r.reason}" Server response delayed. Retry later.')
 
-            df = json_normalize(jo['stocks'])
+            df = pd.DataFrame(jo['stocks'])
             if not len(df):
                 break
             if verbose == 1:
@@ -82,10 +78,14 @@ class NaverStockListing:
         merged = pd.concat(df_list)
         if raw:
             return merged 
+        
+        merged['_code'] = merged['industryCodeType'].apply(lambda x: x['code'] if x else '')
+        merged['_industryGroupKor'] = merged['industryCodeType'].apply(lambda x: x['industryGroupKor'] if x else '')
         ren_cols = {'symbolCode':'Symbol', 
                     'stockNameEng':'Name', 
-                    'industryCodeType.industryGroupKor':'Industry', 
-                    'industryCodeType.code': 'IndustryCode'}
+                    '_code': 'IndustryCode',
+                    '_industryGroupKor':'Industry',
+        }
         merged = merged[ren_cols.keys()]
         merged.rename(columns=ren_cols, inplace=True)
         merged.reset_index(drop=True, inplace=True)
@@ -97,15 +97,15 @@ class NaverEtfListing:
         
     def read(self):
         url = 'https://finance.naver.com/api/sise/etfItemList.nhn'
-        df = json_normalize(json.loads(requests.get(url).text), ['result', 'etfItemList'])
+        r = requests.get(url)
+        df = pd.DataFrame(r.json()['result']['etfItemList'])
         rename_cols = {
             'amonut':'Amount', 'changeRate':'ChangeRate', 'changeVal':'Change', 
             'etfTabCode':'Category', 'itemcode':'Symbol', 'itemname':'Name', 
             'marketSum':'MarCap', 'nav':'NAV', 'nowVal':'Price', 
             'quant':'Volume', 'risefall':'RiseFall', 'threeMonthEarnRate':'EarningRate'
         }
-        df.rename(columns=rename_cols, inplace=True)
         # 'Symbol', 'Name', 'Price', 'NAV', 'EarningRate', 'Volume', 
         # 'Change', 'ChangeRate', 'Amount', 'MarCap', 'EarningRate'
-        df = df[['Symbol', 'Name']]
+        df = df.rename(columns=rename_cols)
         return df

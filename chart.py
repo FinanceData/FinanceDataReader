@@ -1,162 +1,212 @@
 #-*- coding: utf-8 -*-
-
-# chart_utils.py
-# (c) 2018,2021 FinaceData.KR
+#
+# FinaceDataReader chart.py
+# (c)2018-2023 FinaceData.KR
 
 import numpy as np
 import pandas as pd
-from datetime import datetime, timedelta
- 
-__fact_def_params = {  # factory default params
-    'width': 800,
-    'height': 480,
-    'volume_height': 0.3, # 30% size of figure height
-    'recent_high': False,
-    'volume': True,
-    'title': '',
-    'ylabel': '',
-    'moving_average_type': 'SMA',  # 'SMA', 'WMA', 'EMA'
-    'moving_average_lines': (5, 20, 60),
-    'color_up': 'red',
-    'color_down': 'blue',
-    'color_volume_up': 'red', 
-    'color_volume_down': 'blue',
-}
+from datetime import datetime, date
+import itertools
 
-__plot_params = dict(__fact_def_params)
+plotly_install_msg = f'''
+    {'-' * 80}
+    FinanceDataReade.chart.plot() dependen on plotly
+    plotly not installed please install as follows
 
-# tableau 10 colors for moving_average_lines
-tab_colors =['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 
-             'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
+    pip install plotly
 
-bokeh_install_msg = '''
-FinanceDataReade.chart.plot() dependen on bokeh
-bokeh not installed please install as follows
+    FinanceDataReade.chart.plot()는 plotly에 의존성이 있습니다.
+    명령창에서 다음과 같이 plotly를 설치하세요
 
-FinanceDataReade.chart.plot()는 bokeh에 의존성이 있습니다.
-명령창에서 다음과 같이 bokeh를 설치하세요
-
-pip install bokeh
-'''
-
-def config(**kwargs):
-    global __plot_params
-    
-    for key,value in kwargs.items():
-        if key.lower()=='reset' and value:
-            __plot_params = dict(__fact_def_params)
-        elif key=='config':
-            for k,v in value.items():
-                __plot_params[k] = v
-        else:
-            __plot_params[key] = value
-
-def plot(df, start=None, end=None, **kwargs):
+    pip install plotly
     '''
-    plot candle chart with 'df'(DataFrame) from 'start' to 'end'
-    * df: DataFrame to plot
-    * start(default: None)
-    * end(default: None)
-    * recent_high: display recent high price befre n-days (if recent_high == -1 then plot recent high yesterday)
+
+try:
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+except ModuleNotFoundError as e:
+    raise ModuleNotFoundError(plotly_install_msg)
+
+## KRX holiday Calendar
+url = 'https://bit.ly/3DJc81W' # KRX holidays 1975 ~ 2026
+non_biz_days = pd.read_csv(url, dtype={'calnd_dd':str})['calnd_dd'].values
+
+## Chart plot
+def plot(df, tools=None, layout=None):
     '''
-    try:
-        from bokeh.plotting import figure, gridplot
-        from bokeh.models import NumeralTickFormatter, DatetimeTickFormatter, Span
-        from bokeh.io import output_notebook, show, export_png
-        from bokeh.palettes import d3
-    except ModuleNotFoundError as e:
-        raise ModuleNotFoundError(bokeh_install_msg)
+    plot candle chart with DataFrame
+    * df: OHLCV data(DataFrame)
+    * updates: additional chart configurations
+    '''
+    tools = dict() if not tools else tools
+    layout = dict() if not layout else layout
 
-    params = dict(__plot_params)
-    for key,value in kwargs.items():
-        if key == 'config':
-            for key,value in kwargs.items():
-                params[key] = value
-        else:
-            params[key] = value
+    x_ticks = df.index
 
-    df = df.loc[start:end].copy()
+    change = df["Close"].pct_change()
+    oc_ratio = (df["Close"]-df["Open"])/df["Open"]
+    oh_ratio = (df["High"]-df["Open"])/df["Open"]
+    hover_text = [f'DoD: {chg:.1%} OC: {oc:.1%}, OH: {oh:.1%}' for chg, oc, oh in zip(change, oc_ratio, oh_ratio)]
     
-    ma_type = params['moving_average_type']
-    weights = np.arange(240) + 1
+    # OHLC candle chart
+    candle = go.Candlestick(
+        x=x_ticks, 
+        open=df["Open"], high=df["High"], low=df["Low"], close=df["Close"], 
+        name='',
+        text = hover_text,
+        increasing_fillcolor = 'red',
+        decreasing_fillcolor = 'blue',
+        increasing_line_color = 'red',
+        decreasing_line_color = 'blue',
+        increasing_line_width = 1.5,
+        decreasing_line_width = 1.5,
+        showlegend = False, 
+        opacity=0.75,
+    )
 
-    for n in params['moving_average_lines']: # moving average lines
-        if ma_type.upper() == 'SMA':
-            df[f'MA_{n}'] = df.Close.rolling(window=n).mean()
-        elif ma_type.upper() == 'WMA':
-            df[f'MA_{n}'] = df.Close.rolling(n).apply(lambda prices: np.dot(prices, weights[:n])/weights[:n].sum())
-        elif ma_type.upper() == 'EMA':
-            df[f'MA_{n}'] = df.Close.ewm(span=n).mean()
-        elif ma_type.upper() == 'NONE':
-            pass
-        else:
-            raise ValueError(f"moving_average_type '{ma_type}' is invalid")
+    # volume bar chart
+    vol_bar = go.Bar(
+        x=x_ticks, 
+        y=df['Volume'],
+        showlegend=False,
+        name='', 
+    )
 
-    inc = df.Close > df.Open
-    dec = df.Open > df.Close
+    fig = make_subplots(rows=2, cols=1, 
+                        shared_xaxes=True, 
+                        vertical_spacing=0,
+                        row_width=[0.3, 0.7])
 
-    output_notebook()
-    
-    # plot price OHLC candles
-    x = np.arange(len(df))
-    height = params['height']
-    if params['volume']:
-        height = int(params['height'] - params['height'] * params['volume_height'])
-    pp = figure(plot_width=params['width'], 
-                plot_height=height,
-                x_range=(-1, min(120, len(df))),
-                y_range=(df.Low.min(), df.High.max()),
-                title=params['title'],
-                y_axis_label=params['ylabel'])
-    
-    pp.segment(x[inc], df.High[inc], x[inc], df.Low[inc], color=params['color_up'])
-    pp.segment(x[dec], df.High[dec], x[dec], df.Low[dec], color=params['color_down'])
-    pp.vbar(x[inc], 0.8, df.Open[inc], df.Close[inc], fill_color=params['color_up'], line_color=params['color_up'])
-    pp.vbar(x[dec], 0.8, df.Open[dec], df.Close[dec], fill_color=params['color_down'], line_color=params['color_down'])
-    pp.yaxis[0].formatter = NumeralTickFormatter(format='0,0')
+    fig.add_trace(candle, row=1, col=1)
+    fig.add_trace(vol_bar, row=2, col=1)
+
+    # hide rangeslider
+    fig.update_xaxes(rangeslider_visible=False)
+
+    # Remove non-business days 
+    fig.update_xaxes(rangebreaks = [ 
+        dict(bounds=['sat','mon']), # remove weekend
+        dict(values=non_biz_days), # remove non biz days
+        # dict(bounds=[15.5, 9], pattern='hour'), # remove non biz hours
+    ])
+
+    # draw axes and grid
+    fig.update_xaxes(showline=True, linewidth=1, linecolor='black', gridcolor='lightgray')
+    fig.update_yaxes(showline=True, linewidth=1, linecolor='black', gridcolor='lightgray')
+
+    # x-axis tick format
+    fig.update_xaxes(tickformat='%Y-%m-%d', row=2, col=1)
+    fig.update_xaxes(tickangle=45)
+
+    # y-axis tick format
+    fig.update_yaxes(tickformat=',', row='all', col=1)
+
+    # spikes
+    fig.update_xaxes(showspikes=True, spikethickness=1, spikedash="dot", spikecolor="lightgray", spikemode="across", spikesnap='cursor')
+    # fig.update_traces(xaxis="x2") # binding x-axis
+
+    # bgcolor
+    fig.update_layout(plot_bgcolor='white')
+    fig.update_layout(paper_bgcolor='white')
+
+    ## tools (tools: indicators and annotations)
+
+    # available_tools  
+    available_tools = ['SMA', 'EMA', 'VLINE', 'VRECT']
+
+    for key in tools:
+        if key.upper() not in available_tools:
+            raise ValueError(f"Unsupport tool: {key}") 
         
-    if params['volume']:
-        pp.xaxis.visible = False
-    else:
-        x_labels = {i: dt.strftime('%Y-%m-%d') for i,dt in enumerate(df.index)}
-        x_labels.update({len(df): ''})
-        pp.xaxis.major_label_overrides = x_labels
-        pp.xaxis.formatter=DatetimeTickFormatter(hours=["%H:%M"], days=["%Y-%m-%d"])
-        pp.xaxis.major_label_orientation = np.pi / 5
-        
-    for ix,n in enumerate(params['moving_average_lines']):
-        pal = d3['Category10'][10]
-        pp.line(x, df[f'MA_{n}'], line_color=pal[ix % len(pal)])
+    tools = {key.upper(): tools[key] for key in tools} # keys to upper case 
+     
+    # default tools
+    default_ma_params = [10, 20, 60] # default moving averages params
+    if all(x not in tools.keys() for x in ['SMA', 'EMA']):
+        tools['SMA'] = default_ma_params
 
-    if params['recent_high']:
-        to = df.index.max() + timedelta(days=params['recent_high'])
-        hline = Span(location=df.Close[:to].max(), dimension='width', line_dash='dashed', line_color='gray', line_width=2)
-        pp.renderers.extend([hline])
+    line_dashes = ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']
+    line_colors = ['darkmagenta', 'gold', 'limegreen', 'maroon', 'chocolate', 'seagreen', 'coral']
 
-    # plot volume
-    if params['volume']:
-        inc = df.Volume.diff() >= 0
-        dec = df.Volume.diff() < 0
+    line_dash_cycler = itertools.cycle(line_dashes)
+    line_colors_cycler = itertools.cycle(line_colors)
+    line_style_cycler = itertools.cycle(itertools.product(line_dashes, line_colors))
 
-        height = int(params['height'] * params['volume_height'])
-        pv = figure(plot_width=params['width'], plot_height=height, x_range = pp.x_range)
+    if 'SMA' in tools: # SMA: simple moving average 
+        args = tools.pop('SMA')
+        for arg in args:
+            line_dash, line_color = next(line_style_cycler)
+            ma_args = dict()
+            ma_args['line_width'] = 1
+            if type(arg) == int:
+                window = arg
+                ma_args['line_dash'] = line_dash
+                ma_args['line_color'] = line_color
+            elif type(arg) == dict:
+                window = arg['window']
+                ma_args['line_dash'] = arg['line_dash'] if 'line_dash' in arg else line_dash
+                ma_args['line_color'] = arg['line_color'] if 'line_color' in arg else line_color
+                ma_args['line_width'] = arg['line_width'] if 'line_width' in arg else 1
+            ma_price = df['Close'].rolling(window).mean().round(0)
+            ma_args['x'] = ma_price.index
+            ma_args['y'] = ma_price
+            ma_args['name'] = f'SMA_{window}'
+            fig.add_trace(go.Scatter(**ma_args), row=1, col=1)
 
-        pv.vbar(x[inc], 0.8, df.Volume[inc], fill_color=params['color_volume_up'], line_color="black")
-        pv.vbar(x[dec], 0.8, df.Volume[dec], fill_color=params['color_volume_down'], line_color="black")
+    if 'EMA' in tools: # EMA: exponential moving average
+        params = tools.pop('EMA')
+        for p in params:
+            line_dash, line_color = next(line_style_cycler)
+            ma_args = dict()
+            ma_args['line_width'] = 1
+            if type(p) == int:
+                window = p
+                ma_args['line_dash'] = line_dash
+                ma_args['line_color'] = line_color
+            elif type(p) == dict:
+                window = p['window']
+                ma_args.update(arg)
+                ma_args['line_dash'] = arg['line_dash'] if 'line_dash' in arg else line_dash
+                ma_args['line_color'] = arg['line_color'] if 'line_color' in arg else line_color
+                ma_args['line_width'] = arg['line_width'] if 'line_width' in arg else 1
+            ma_price = df['Close'].ewm(span=window).mean()
+            ma_args = dict()
+            ma_args['x'] = ma_price.index
+            ma_args['y'] = ma_price
+            ma_args['name'] = f'EMA_{window}'
+            fig.add_trace(go.Scatter(**ma_args), row=1, col=1)
 
-        pv.yaxis[0].formatter = NumeralTickFormatter(format='0,0')
-        x_labels = {i: dt.strftime('%Y-%m-%d') for i,dt in enumerate(df.index)}
-        x_labels.update({len(df): ''})
-        pv.xaxis.major_label_overrides = x_labels
-        pv.xaxis.formatter=DatetimeTickFormatter(hours=["%H:%M"], days=["%Y-%m-%d"])
-        pv.xaxis.major_label_orientation = np.pi / 5
-        pv.y_range.range_padding = 0
+    if 'VLINE' in tools: # VLINE: vertical line
+        vline_list = tools.pop('VLINE')
+        for vline in vline_list:
+            vline_args = dict(line_width=1.5, line_dash="dot", line_color="tomato", layer="below")
+            if type(vline) in [pd.Timestamp, str, datetime, date]:
+                vline_args['x'] = str(vline)
+            elif type(vline) == dict:
+                vline_args.update(vline)
+            else:
+                raise ValueError("'vline' must be list of str or list of dict")
+            fig.add_vline(**vline_args)
 
-        # 가격(pp)과 거래량(pv) 함께 그리기
-        p = gridplot([[pp], [pv]])
-    else:
-        p = gridplot([[pp]])
-    show(p)
-    
-    if 'save' in kwargs:
-        export_png(p, filename=kwargs['save'])
+    if 'VRECT' in tools: # VRECT: highlighting period
+        vrect_list = tools.pop('VRECT') if 'VRECT' in tools else {}
+        for vrect in vrect_list:
+            vrect_args = dict(fillcolor="LightSalmon", opacity=0.5, layer="below", line_width=0)
+            if type(vrect) == tuple:
+                vrect_args['x0'] = str(vrect[0])
+                vrect_args['x1'] = str(vrect[1])
+            elif type(vrect) == dict:
+                vrect_args.update(vrect)
+            else:
+                raise ValueError("'vrect' must be list of tuple or list of dict")
+            fig.add_vrect(**vrect_args)
+
+    ## update_layout
+    layout_defaults = {
+        'hovermode': 'x', # available hovermodes: 'closest', 'x', 'x unified', 'y', 'y unified'
+        'margin': go.layout.Margin(l=0, r=0, b=0, t=0), # margins
+    }
+    layout.update(layout_defaults)
+    fig.update_layout(layout)
+    return fig
+

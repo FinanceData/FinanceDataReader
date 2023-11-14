@@ -24,25 +24,24 @@ def _naver_data_reader(symbol, start, end):
 class NaverDailyReader:
     def __init__(self, symbol, start=None, end=None):
         self.symbol = symbol
-        start, end = _validate_dates(start, end)
-        self.start = start
-        self.end = end
+        self.source, self.code = symbol.split(':') if ':' in symbol else (None, symbol)
+        self.start, self.end = _validate_dates(start, end)
 
     def read(self):
-        # single symbol
-        if ',' not in self.symbol: 
-            return _naver_data_reader(self.symbol, self.start, self.end)
+        # single code
+        if ',' not in self.code: 
+            return _naver_data_reader(self.code, self.start, self.end)
         
-        # multiple symbols, merge close price data as columns
-        sym_list = [s.strip() for s in self.symbol.split(',') if s]
+        # multiple codes, merge close price data as columns
+        code_list = [s.strip() for s in self.code.split(',') if s]
         df_list = []
-        for sym in sym_list:
+        for sym in code_list:
             try:
                 df = _naver_data_reader(sym, self.start, self.end)
             except Exception as e:
                 print(e, f' - "{sym}" not found or invalid periods')
             df_list.append(df.loc[self.start:self.end])
         merged = pd.concat([x['Close'] for x in df_list], axis=1)
-        merged.columns = sym_list
+        merged.columns = code_list
         return merged
 

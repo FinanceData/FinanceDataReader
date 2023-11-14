@@ -4,7 +4,7 @@ import pandas as pd
 
 def _convert_letter_to_num(str_num):
     powers = {'B': 10 ** 9, 'M': 10 ** 6, 'K': 10 ** 3, '': 1}
-    m = re.search("([0-9\.]+)(M|B|K|)", str_num)
+    m = re.search(r"([0-9\.]+)(M|B|K|)", str_num)
     if m:
         val = m.group(1)
         mag = m.group(2)
