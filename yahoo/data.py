@@ -35,6 +35,7 @@ def _yahoo_data_reader(symbol, exchange, start, end):
         f'https://query1.finance.yahoo.com/v7/finance/download/{_map_symbol(symbol, exchange)}?'
         f'period1={start_ts}&period2={end_ts}&interval=1d&events=history&includeAdjustedClose=true'
     )
+    print(url)
     try:
         df = pd.read_csv(url, parse_dates=True, index_col='Date')
     except Exception as e:

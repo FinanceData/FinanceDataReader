@@ -28,7 +28,7 @@ except ModuleNotFoundError as e:
     raise ModuleNotFoundError(plotly_install_msg)
 
 ## KRX holiday Calendar
-url = 'https://bit.ly/3DJc81W' # KRX holidays 1975 ~ 2026
+url = 'https://bit.ly/3QXlrm2' # KRX holidays 1975 ~ 2026
 non_biz_days = pd.read_csv(url, dtype={'calnd_dd':str})['calnd_dd'].values
 
 ## Chart plot

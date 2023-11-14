@@ -10,3 +10,5 @@ docs/build
 .idea
 *.iml
 *~
+.vscode
+.pytest_cache
