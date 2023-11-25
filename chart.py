@@ -93,7 +93,6 @@ def plot(df, tools=None, layout=None):
     fig.update_xaxes(rangeslider_visible=False)
 
     # holidays
-    print(df.attrs.get('exchange'))
     holidays = holidays_krx
     if df.attrs.get('exchange') != 'KRX':
         holidays = holidays_hyse

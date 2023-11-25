@@ -43,5 +43,6 @@ class NaverDailyReader:
             df_list.append(df.loc[self.start:self.end])
         merged = pd.concat([x['Close'] for x in df_list], axis=1)
         merged.columns = code_list
+        merged.attrs = {'exchange':'KRX', 'source':'NAVER', 'data':'PRICE'}
         return merged
 
