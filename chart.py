@@ -27,9 +27,10 @@ try:
 except ModuleNotFoundError as e:
     raise ModuleNotFoundError(plotly_install_msg)
 
-## KRX holiday Calendar
-url = 'https://bit.ly/3QXlrm2' # KRX holidays 1975 ~ 2026
-non_biz_days = pd.read_csv(url, dtype={'calnd_dd':str})['calnd_dd'].values
+## holiday Calendar
+holidays_url_base = 'https://raw.githubusercontent.com/FinanceData/FinanceDataReader/master/calendars'
+
+holidays_krx,holidays_hyse = None, None 
 
 ## Chart plot
 def plot(df, tools=None, layout=None):
@@ -38,6 +39,14 @@ def plot(df, tools=None, layout=None):
     * df: OHLCV data(DataFrame)
     * updates: additional chart configurations
     '''
+    global holidays_krx, holidays_hyse
+    
+    if holidays_krx is None:
+        holidays_krx = pd.read_csv(f'{holidays_url_base}/holidays-krx.csv')['date'].values
+    if holidays_hyse is None:
+        holidays_hyse = pd.read_csv(f'{holidays_url_base}/holidays-nyse.csv')['date'].values
+
+
     tools = dict() if not tools else tools
     layout = dict() if not layout else layout
 
@@ -83,10 +92,16 @@ def plot(df, tools=None, layout=None):
     # hide rangeslider
     fig.update_xaxes(rangeslider_visible=False)
 
+    # holidays
+    print(df.attrs.get('exchange'))
+    holidays = holidays_krx
+    if df.attrs.get('exchange') != 'KRX':
+        holidays = holidays_hyse
+
     # Remove non-business days 
     fig.update_xaxes(rangebreaks = [ 
         dict(bounds=['sat','mon']), # remove weekend
-        dict(values=non_biz_days), # remove non biz days
+        dict(values=holidays), # remove non biz days
         # dict(bounds=[15.5, 9], pattern='hour'), # remove non biz hours
     ])
 

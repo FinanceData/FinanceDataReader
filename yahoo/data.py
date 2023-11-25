@@ -1,11 +1,9 @@
 # FinanceDataReader
 # 2018-2022 [FinanceData.KR](https://financedata.github.io/) Open Source Financial data reader
 
-import re
-import requests
 import pandas as pd
 import time
-from datetime import datetime, timedelta
+from datetime import timedelta
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
 def _map_symbol(symbol, exchange):
@@ -35,7 +33,6 @@ def _yahoo_data_reader(symbol, exchange, start, end):
         f'https://query1.finance.yahoo.com/v7/finance/download/{_map_symbol(symbol, exchange)}?'
         f'period1={start_ts}&period2={end_ts}&interval=1d&events=history&includeAdjustedClose=true'
     )
-    print(url)
     try:
         df = pd.read_csv(url, parse_dates=True, index_col='Date')
     except Exception as e:
@@ -69,5 +66,6 @@ class YahooDailyReader:
                 df_list.append(df)
         merged = pd.concat([x['Close'] for x in df_list], axis=1)
         merged.columns = sym_list
+        merged.attrs = {'exchange':self.exchange, 'source':'YAHOO', 'data':'PRICE'}
         return merged
     

@@ -42,6 +42,9 @@ def DataReader(symbol:str, start=None, end=None, exchange=None, data_source=None
         )
         print(deprecated_noitce)
 
+    if type(symbol) is not str:
+        symbol = ','.join(list(symbol))
+
     symbol = symbol.upper() # ignore case
     symbol = ''.join(symbol.split()) # remove whtiespace
 

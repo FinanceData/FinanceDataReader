@@ -138,6 +138,7 @@ class KrxDailyReader:
 
         df = _krx_stock_price(full_code, from_date=self.start, to_date=self.end)
         df = df[['Open', 'High', 'Low', 'Close', 'Volume', 'Change']]
+        df.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'PRICE'}
         return df
 
 class KrxDailyDetailReader:
@@ -151,7 +152,9 @@ class KrxDailyDetailReader:
         if not full_code:
             raise ValueError(f'"{self.symbol}" is not supported')
 
-        return _krx_stock_price(full_code, from_date=self.start, to_date=self.end)
+        df = _krx_stock_price(full_code, from_date=self.start, to_date=self.end)
+        df.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'PRICE'}
+        return df
 
 class KrxIndexReader:
     def __init__(self, symbol, start=None, end=None):
@@ -161,7 +164,9 @@ class KrxIndexReader:
 
     def read(self):
         idx1, idx2 = self.symbol[0], self.symbol[1:]
-        return _krx_index_price(idx1, idx2, self.start, self.end)
+        df = _krx_index_price(idx1, idx2, self.start, self.end)
+        df.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'INDEX'}
+        return df
 
 
 class KrxDelistingReader:
@@ -213,4 +218,5 @@ class KrxDelistingReader:
             df[col] = pd.to_numeric(df[col].str.replace(',', ''), errors='coerce')
         
         df['ChangeRate'] = df['ChangeRate'] / 100.0 
+        df.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'LISTINGS'}
         return df

@@ -89,6 +89,7 @@ class NaverStockListing:
         merged = merged[ren_cols.keys()]
         merged.rename(columns=ren_cols, inplace=True)
         merged.reset_index(drop=True, inplace=True)
+        merged.attrs = {'exchange':'KRX', 'source':'NAVER', 'data':'LISTINGS'}
         return merged
 
 class NaverEtfListing:
@@ -108,4 +109,5 @@ class NaverEtfListing:
         # 'Symbol', 'Name', 'Price', 'NAV', 'EarningRate', 'Volume', 
         # 'Change', 'ChangeRate', 'Amount', 'MarCap', 'EarningRate'
         df = df.rename(columns=rename_cols)
+        df.attrs = {'exchange':'KRX', 'source':'NAVER', 'data':'LISTINGS'}
         return df

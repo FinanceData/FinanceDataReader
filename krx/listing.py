@@ -44,6 +44,7 @@ class KrxMarcapListing:
                     'MKTCAP':'Marcap', 'LIST_SHRS':'Stocks', 'MKT_NM':'Market', 'MKT_ID': 'MarketId' }
         df = df.rename(columns=cols_map)
         df = df.reset_index(drop=True)
+        df.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'LISTINGS'}
         return df
 
     
@@ -95,6 +96,7 @@ class KrxStockListing: # descriptive information
         merged = pd.merge(df_left, df_right, how='left', left_on='Code', right_on='Code')
         if self.market in ['KONEX-DESC', 'KOSDAQ-DESC', 'KOSPI-DESC']:
             merged = merged[merged['Market']==self.market.replace('-DESC','')].reset_index(drop=True)
+        merged.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'LISTINGS'}
         return merged
 
 class KrxDelisting:
@@ -133,6 +135,7 @@ class KrxDelisting:
         df['ArrantEndDate'] = pd.to_datetime(df['ArrantEndDate'], format='%Y/%m/%d', errors='coerce')
         df['ParValue'] = pd.to_numeric(df['ParValue'].str.replace(',', ''), errors='coerce')
         df['ListingShares'] = pd.to_numeric(df['ListingShares'].str.replace(',', ''), errors='coerce')
+        df.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'LISTINGS'}
         return df
     
 class KrxAdministrative:
@@ -145,5 +148,6 @@ class KrxAdministrative:
         df['지정일'] = pd.to_datetime(df['지정일'])
         col_map = {'종목코드':'Symbol', '종목명':'Name', '지정일':'DesignationDate', '지정사유':'Reason'}
         df.rename(columns=col_map, inplace=True)    
+        df.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'LISTINGS'}
         return df[['Symbol', 'Name', 'DesignationDate', 'Reason']]    
 
