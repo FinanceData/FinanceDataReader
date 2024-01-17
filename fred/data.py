@@ -42,14 +42,14 @@ class FredReader:
                     df.replace('.', '', inplace=True)
                     df_list.append(df)
             merged = pd.concat(df_list, axis=1)
-            merged.fillna(method='ffill', inplace=True)
+            merged.ffill(inplace=True)
             return merged
 
         elif '.csv' in fname:
             df = pd.read_csv(url, parse_dates=['DATE'], na_values='.')
             df.set_index('DATE', inplace=True)
             df.replace('.', '', inplace=True)
-            df.fillna(method='ffill', inplace=True)
+            df.ffill(inplace=True)
             return df
         
         
