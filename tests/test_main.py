@@ -230,6 +230,12 @@ def test_etf_kr():
     df = fdr.StockListing('ETF/KR') # 한국 ETF 전체
     assert len(df) > 700
 
+def test_etf_us():
+    # 미국 ETF 목록
+    df = fdr.StockListing('ETF/US') # 미국 ETF 전체
+    assert len(df) > 700
+
+
 @pytest.mark.exchange
 def test_exchange():
     df = fdr.DataReader('USD/KRW', '2018-01-01', '2020-08-30')

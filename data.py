@@ -147,9 +147,8 @@ def StockListing(market: str) -> pd.DataFrame:
         return WikipediaStockListing(market).read()
     elif market.startswith('ETF'):
         toks = market.split('/')
-        etf, country = toks[0], toks[1]
-        if country.upper() == 'KR':
-            return NaverEtfListing().read()
+        _, country = toks[0], toks[1]
+        return NaverEtfListing(country).read()
     else:
         # 해외 ETF 지원 잠정 중단
         msg = f'"{market}" is not implemented'

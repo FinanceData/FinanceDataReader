@@ -39,8 +39,6 @@ def _yahoo_data_reader(symbol, exchange, start, end):
         print(e, f' - symbol "{symbol}" not found or invalid periods')
         df = pd.DataFrame()
 
-    df = df[['Open', 'High', 'Low', 'Adj Close', 'Volume']]
-    df = df.rename(columns={'Adj Close':'Close'})
     return df.loc[start:end]
 
     

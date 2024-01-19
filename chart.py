@@ -47,7 +47,7 @@ def plot(df, tools=None, layout=None):
         holidays_hyse = pd.read_csv(f'{holidays_url_base}/holidays-nyse.csv')['date'].values
 
 
-    tools = dict() if not tools else tools
+    tools = {'SMA': [10, 20, 60]} if not tools else tools
     layout = dict() if not layout else layout
 
     x_ticks = df.index
@@ -74,11 +74,14 @@ def plot(df, tools=None, layout=None):
     )
 
     # volume bar chart
+    vol_colors = np.where(df['Close'].shift(1) > df['Close'], 'blue', 'red')
     vol_bar = go.Bar(
         x=x_ticks, 
         y=df['Volume'],
         showlegend=False,
         name='', 
+        opacity = 0.5,
+        marker={'color': vol_colors},
     )
 
     fig = make_subplots(rows=2, cols=1, 
@@ -126,7 +129,7 @@ def plot(df, tools=None, layout=None):
     ## tools (tools: indicators and annotations)
 
     # available_tools  
-    available_tools = ['SMA', 'EMA', 'VLINE', 'VRECT']
+    available_tools = ['SMA', 'EMA', 'HLINE', 'VLINE', 'VRECT']
 
     for key in tools:
         if key.upper() not in available_tools:
@@ -135,32 +138,32 @@ def plot(df, tools=None, layout=None):
     tools = {key.upper(): tools[key] for key in tools} # keys to upper case 
      
     # default tools
-    default_ma_params = [10, 20, 60] # default moving averages params
-    if all(x not in tools.keys() for x in ['SMA', 'EMA']):
-        tools['SMA'] = default_ma_params
+    # default_ma_params = [10, 20, 60] # default moving averages params
+    # if all(x not in tools.keys() for x in ['SMA', 'EMA']):
+    #     tools['SMA'] = default_ma_params
 
     line_dashes = ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']
     line_colors = ['darkmagenta', 'gold', 'limegreen', 'maroon', 'chocolate', 'seagreen', 'coral']
-
-    line_dash_cycler = itertools.cycle(line_dashes)
-    line_colors_cycler = itertools.cycle(line_colors)
     line_style_cycler = itertools.cycle(itertools.product(line_dashes, line_colors))
+
+    default_line_width = 0.75
 
     if 'SMA' in tools: # SMA: simple moving average 
         args = tools.pop('SMA')
         for arg in args:
             line_dash, line_color = next(line_style_cycler)
             ma_args = dict()
-            ma_args['line_width'] = 1
+            ma_args['line_width'] = default_line_width
             if type(arg) == int:
                 window = arg
                 ma_args['line_dash'] = line_dash
                 ma_args['line_color'] = line_color
+                ma_args['line_width'] = default_line_width
             elif type(arg) == dict:
                 window = arg['window']
                 ma_args['line_dash'] = arg['line_dash'] if 'line_dash' in arg else line_dash
                 ma_args['line_color'] = arg['line_color'] if 'line_color' in arg else line_color
-                ma_args['line_width'] = arg['line_width'] if 'line_width' in arg else 1
+                ma_args['line_width'] = arg['line_width'] if 'line_width' in arg else default_line_width
             ma_price = df['Close'].rolling(window).mean().round(0)
             ma_args['x'] = ma_price.index
             ma_args['y'] = ma_price
@@ -168,44 +171,65 @@ def plot(df, tools=None, layout=None):
             fig.add_trace(go.Scatter(**ma_args), row=1, col=1)
 
     if 'EMA' in tools: # EMA: exponential moving average
-        params = tools.pop('EMA')
-        for p in params:
+        args = tools.pop('EMA')
+        for arg in args:
             line_dash, line_color = next(line_style_cycler)
             ma_args = dict()
-            ma_args['line_width'] = 1
-            if type(p) == int:
-                window = p
+            ma_args['line_width'] = default_line_width
+            if type(arg) == int:
+                window = arg
                 ma_args['line_dash'] = line_dash
                 ma_args['line_color'] = line_color
-            elif type(p) == dict:
-                window = p['window']
+                ma_args['line_width'] = default_line_width
+            elif type(arg) == dict:
+                window = arg['window']
                 ma_args.update(arg)
                 ma_args['line_dash'] = arg['line_dash'] if 'line_dash' in arg else line_dash
                 ma_args['line_color'] = arg['line_color'] if 'line_color' in arg else line_color
-                ma_args['line_width'] = arg['line_width'] if 'line_width' in arg else 1
+                ma_args['line_width'] = arg['line_width'] if 'line_width' in arg else default_line_width
             ma_price = df['Close'].ewm(span=window).mean()
-            ma_args = dict()
             ma_args['x'] = ma_price.index
             ma_args['y'] = ma_price
             ma_args['name'] = f'EMA_{window}'
             fig.add_trace(go.Scatter(**ma_args), row=1, col=1)
 
+    if 'HLINE' in tools: # HLINE: Horizontal line
+        hline_args = dict(line_width=1.5, line_dash="dot", line_color="tomato", layer="below")
+        hline_value = tools.pop('HLINE')
+        if hasattr(hline_value, '__iter__'):
+            for hline in hline_value:
+                if type(hline) in [int, float]:
+                    hline_args['y'] = hline
+                elif type(hline) == dict:
+                    hline_args.update(hline)
+                else:
+                    raise ValueError("'HLINE' must be list of str or list of dict")
+                fig.add_hline(**hline_args)
+        else:
+            hline_args['y'] = hline_value
+            fig.add_hline(**hline_args) # just one value
+
     if 'VLINE' in tools: # VLINE: vertical line
-        vline_list = tools.pop('VLINE')
-        for vline in vline_list:
-            vline_args = dict(line_width=1.5, line_dash="dot", line_color="tomato", layer="below")
-            if type(vline) in [pd.Timestamp, str, datetime, date]:
-                vline_args['x'] = str(vline)
-            elif type(vline) == dict:
-                vline_args.update(vline)
-            else:
-                raise ValueError("'vline' must be list of str or list of dict")
-            fig.add_vline(**vline_args)
+        vline_args = dict(line_width=1.5, line_dash="dot", line_color="tomato", layer="below")
+        vline_value = tools.pop('VLINE')
+        if hasattr(vline_value, '__iter__'):
+            for vline in vline_value:
+                if type(vline) in [pd.Timestamp, str, datetime, date]:
+                    vline_args['x'] = pd.to_datetime(vline).timestamp() * 1000
+                elif type(vline) == dict:
+                    vline_args.update(vline)
+                    vline_args['x'] = pd.to_datetime(vline_args['x']).timestamp() * 1000
+                else:
+                    raise ValueError("'VLINE' must be list of str or list of dict")
+                fig.add_vline(**vline_args)
+        else:
+            vline_args['y'] = vline_value
+            fig.add_hline(**vline_args) # just one value
 
     if 'VRECT' in tools: # VRECT: highlighting period
         vrect_list = tools.pop('VRECT') if 'VRECT' in tools else {}
         for vrect in vrect_list:
-            vrect_args = dict(fillcolor="LightSalmon", opacity=0.5, layer="below", line_width=0)
+            vrect_args = dict(fillcolor="LightSalmon", opacity=0.3, layer="below", line_width=0)
             if type(vrect) == tuple:
                 vrect_args['x0'] = str(vrect[0])
                 vrect_args['x1'] = str(vrect[1])
@@ -219,6 +243,8 @@ def plot(df, tools=None, layout=None):
     layout_defaults = {
         'hovermode': 'x', # available hovermodes: 'closest', 'x', 'x unified', 'y', 'y unified'
         'margin': go.layout.Margin(l=0, r=0, b=0, t=0), # margins
+        'width': 1280,
+        'height': 640,
     }
     layout.update(layout_defaults)
     fig.update_layout(layout)

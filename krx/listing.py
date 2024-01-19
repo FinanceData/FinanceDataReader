@@ -97,6 +97,7 @@ class KrxStockListing: # descriptive information
         if self.market in ['KONEX-DESC', 'KOSDAQ-DESC', 'KOSPI-DESC']:
             merged = merged[merged['Market']==self.market.replace('-DESC','')].reset_index(drop=True)
         merged.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'LISTINGS'}
+        merged = merged.drop_duplicates(subset='Code').reset_index(drop=True)
         return merged
 
 class KrxDelisting:
