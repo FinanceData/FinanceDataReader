@@ -141,7 +141,7 @@ def StockListing(market: str) -> pd.DataFrame:
         return NaverStockListing(market).read()
     elif market in ['KRX-DELISTING' ]:
         return KrxDelisting(market).read()
-    elif market in ['KRX-ADMINISTRATIVE' ]:
+    elif market in ['KRX-ADMINISTRATIVE', 'KRX-ADMIN' ]:
         return KrxAdministrative(market).read()
     elif market in ['S&P500', 'SP500']:
         return WikipediaStockListing(market).read()

@@ -133,6 +133,10 @@ stocks = fdr.StockListing('KOSPI-DESC') # KOSPI: 5,897 종목
 stocks = fdr.StockListing('KOSDAQ-DESC') # KOSDAQ: 1,609 종목
 stocks = fdr.StockListing('KONEX-DESC') # KONEX: 126 종목
 
+# KRX 특수 종목 리스팅 (상장폐지 종목, 관리종목)
+stocks = fdr.StockListing('KRX-DELISTING') # 3천+ 종목 - 상장폐지 종목 전체
+stocks = fdr.StockListing('KRX-ADMIN') # 50+ 종목 - KRX 관리종목
+
 # US Market listings 미국 시장 거래소별 전종목 리스팅
 stocks = fdr.StockListing('S&P500') # S&P500: 503 종목  
 stocks = fdr.StockListing('NASDAQ') # 나스닥 (NASDAQ): 4천+ 종목
@@ -145,10 +149,6 @@ stocks = fdr.StockListing('HKEX') # 홍콩 증권거래소(Hong Kong Exchange: H
 stocks = fdr.StockListing('TSE') # 도쿄 증권거래소(Tokyo Stock Exchange: TSE): 3천9백+ 종목
 stocks = fdr.StockListing('HOSE') # 호찌민 증권거래소(Ho Chi Minh City Stock Exchange: HOSE): 4백+ 종목
 
-# KRX 특수종목
-stocks = fdr.StockListing('KRX-DELISTING') # 3천+ 종목 - KRX 상장폐지 종목 전체
-stocks = fdr.StockListing('KRX-ADMINISTRATIVE') # 50+ 종목 - KRX 관리종목
-
 # KRX ETFs
 etfs = fdr.StockListing('ETF/KR') # 한국 ETF 전종목
 
@@ -157,8 +157,12 @@ df = fdr.DataReader('FRED:M2') #  M2 통화량
 df = fdr.DataReader('FRED:NASDAQCOM') # NASDAQCOM 나스닥종합지수
 df = fdr.DataReader('FRED:T10Y2Y') # 미국 장단기금리차 (1980년 ~)
 
+# 달러 인덱스
+df = fdr.DataReader('^NYICDX') # ICE U.S. Dollar Index (^NYICDX) 달러인덱스 (1980~현재)
+
 # FRED 데이터 여러 항목 한번에 
 df = fdr.DataReader('FRED:M2,HSN1F,NASDAQCOM')  # M2 통화량, HSN1F 주택판매지수, NASDAQCOM 나스닥종합지수
+
 
 # 캔들차트
 df = fdr.DataReader('005930', '2023-01-01', '2023-06-30')

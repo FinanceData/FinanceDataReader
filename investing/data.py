@@ -18,6 +18,7 @@ class InvestingDailyReader:
     def _get_currid_investing(self, symbol, exchange=None):
         url = f'https://api.investing.com/api/search/v2/search?q={symbol}'
         r = requests.get(url, headers={'user-agent':'Mozilla/5.0', 'domain-id': 'en', 'dnt': '1'})
+        print(r.text)
         jo = r.json()
         # print(json.dumps(jo['quotes'], indent=4))
 
