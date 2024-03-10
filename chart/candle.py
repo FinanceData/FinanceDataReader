@@ -8,8 +8,11 @@ import pandas as pd
 from datetime import datetime, date
 import itertools
 
-plotly_install_msg = f'''
-    {'-' * 80}
+try:
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+except ModuleNotFoundError as e:
+    plotly_install_msg = f'''{'-' * 80}
     FinanceDataReade.chart.plot() dependen on plotly
     plotly not installed please install as follows
 
@@ -20,20 +23,14 @@ plotly_install_msg = f'''
 
     pip install plotly
     '''
-
-try:
-    import plotly.graph_objects as go
-    from plotly.subplots import make_subplots
-except ModuleNotFoundError as e:
     raise ModuleNotFoundError(plotly_install_msg)
 
 ## holiday Calendar
 holidays_url_base = 'https://raw.githubusercontent.com/FinanceData/FinanceDataReader/master/calendars'
-
 holidays_krx,holidays_hyse = None, None 
 
 ## Chart plot
-def plot(df, tools=None, layout=None):
+def candle(df, tools=None, layout=None):
     '''
     plot candle chart with DataFrame
     * df: OHLCV data(DataFrame)
@@ -246,7 +243,8 @@ def plot(df, tools=None, layout=None):
         'width': 1280,
         'height': 640,
     }
-    layout.update(layout_defaults)
-    fig.update_layout(layout)
+    new_layout = {}
+    new_layout.update(layout_defaults) 
+    new_layout.update(layout) 
+    fig.update_layout(new_layout)
     return fig
-

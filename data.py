@@ -1,15 +1,18 @@
 # FinanceDataReader
 # 2018-2022 [FinanceData.KR](https://financedata.github.io/) Open Source Financial data reader
 
-from FinanceDataReader.yahoo.data import (YahooDailyReader)
-from FinanceDataReader.nasdaq.listing import (NasdaqStockListing)
+from FinanceDataReader.ecos.data import (EcosDataReader, EcosKeyStatDataReader)
+from FinanceDataReader.ecos.snap import (EcosSnapReader)
 from FinanceDataReader.krx.data import (KrxDailyReader, KrxDailyDetailReader, KrxIndexReader, KrxDelistingReader)
 from FinanceDataReader.krx.snap import (KrxSnapReader)
 from FinanceDataReader.krx.listing import (KrxStockListing, KrxDelisting, KrxMarcapListing, KrxAdministrative)
+from FinanceDataReader.yahoo.data import (YahooDailyReader)
+from FinanceDataReader.nasdaq.listing import (NasdaqStockListing)
 from FinanceDataReader.wikipedia.listing import (WikipediaStockListing)
 from FinanceDataReader.investing.data import (InvestingDailyReader)
 from FinanceDataReader.investing.listing import (InvestingEtfListing)
 from FinanceDataReader.naver.data import (NaverDailyReader)
+from FinanceDataReader.naver.snap import (NaverSnapReader)
 from FinanceDataReader.naver.listing import (NaverStockListing, NaverEtfListing)
 from FinanceDataReader.fred.data import (FredReader)
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
@@ -97,30 +100,44 @@ def DataReader(symbol:str, start=None, end=None, exchange=None, data_source=None
             return NaverDailyReader(codes, start, end).read()
         elif source == 'YAHOO':
             return YahooDailyReader(codes, start, end).read()
+        elif source == 'INVESTING':
+            return InvestingDailyReader(codes, start, end).read()
         elif source == 'FRED':
             return FredReader(codes, start, end).read()
         elif source in ['NASDAQ', 'NYSE', 'AMEX', 'SSE', 'SZSE', 'HKEX', 'TSE', 'HOSE']:
             return YahooDailyReader(codes, start, end, source).read()
+        elif source == 'ECOS':
+            return EcosDataReader(codes, start, end).read()
+        elif source == 'ECOS-KEYSTAT':
+            return EcosKeyStatDataReader(codes, start, end).read()
         else:
             msg = f'"{symbol}" is not implemented'
             raise NotImplementedError(msg)
  
-def SnapDataReader(path:str) -> pd.DataFrame:
+def SnapDataReader(ticker: str) -> pd.DataFrame:
     '''
     read data snapshots from various finance data source
     * symbol: code or ticker
 
     usage:
+        - fdr.SnapDataReader('ECOS/KEYSTAT') # 100대 경제지표 
         - fdr.SnapDataReader('KRX/INDEX/LIST') # KRX 지수목록(KRX index list)
-        - fdr.SnapDataReader('KRX/INDEX/STOCK/1001') #  # 지수구성종목 (1001: 코스피)
-        - fdr.SnapDataReader('NAVER/STOCK/005930/요약재무')
-        - fdr.SnapDataReader('NAVER/STOCK/005930/외국인')
-        - fdr.SnapDataReader('NAVER/STOCK/005930/투자정보')
-        - fdr.SnapDataReader('DART/기업목록')
+        - fdr.SnapDataReader('KRX/INDEX/STOCK/1001') # 지수구성종목 (1001: 코스피)
+        - fdr.SnapDataReader('NAVER/STOCK/005930/FINSTATE') # 재무제표
+        - fdr.SnapDataReader('NAVER/STOCK/005930/FOREIGN') # 외국인소진율
+        - fdr.SnapDataReader('NAVER/STOCK/005930/INVSTORS') # 투자자별종합매매동향
+        - fdr.SnapDataReader('DART/CORP_CODES')
     '''
-    path = path.upper()
-    if path.startswith('KRX/'):
-        return KrxSnapReader(path).read()
+    ticker = ticker.upper()
+    if ticker.startswith('KRX/'):
+        return KrxSnapReader(ticker).read()
+    elif ticker.startswith('ECOS/'):
+        return EcosSnapReader(ticker).read()
+    elif ticker.startswith('NAVER/'):
+        return NaverSnapReader(ticker).read()
+    else:
+        msg = f'"{ticker}" is not implemented'
+        raise NotImplementedError(msg)
 
 def StockListing(market: str) -> pd.DataFrame:
     '''
@@ -161,5 +178,3 @@ def EtfListing(country='KR'):
     # Deprecation warnings
     print('EtfListing() deprecated. Use fdr.StockListing("ETF/KR") instead of fdr.EtfListing("KR")')
     return None
-
-

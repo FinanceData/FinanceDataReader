@@ -163,6 +163,13 @@ df = fdr.DataReader('^NYICDX') # ICE U.S. Dollar Index (^NYICDX) 달러인덱스
 # FRED 데이터 여러 항목 한번에 
 df = fdr.DataReader('FRED:M2,HSN1F,NASDAQCOM')  # M2 통화량, HSN1F 주택판매지수, NASDAQCOM 나스닥종합지수
 
+#  KRX지수및 지수 구 성종목
+df = fdr.SnapDataReader('KRX/INDEX/LIST') # KRX 전체 지수목록
+
+df = fdr.SnapDataReader('KRX/INDEX/STOCK/1001') # KOSPI 지수구성종목
+df = fdr.SnapDataReader('KRX/INDEX/STOCK/1028') # 코스피 200
+df = fdr.SnapDataReader('KRX/INDEX/STOCK/5106') # KRX ESG Leaders 150 테마 지수 구성종목
+
 
 # 캔들차트
 df = fdr.DataReader('005930', '2023-01-01', '2023-06-30')
@@ -182,4 +189,4 @@ fdr.chart.plot(df)
 * [S&P500 가격 데이터 수집과 수익률 분석](https://nbviewer.jupyter.org/710b8f0a4bd9a8df91ae1be6c7e838b1) 
 * [S&P500 팩터 데이터 수집과 분석](https://nbviewer.jupyter.org/35a1b0d5248bc9b09513e53be437ac42)
 
-**2018-2023 [FinanceData.KR]()**
+**2018-2024 [FinanceData.KR]()**

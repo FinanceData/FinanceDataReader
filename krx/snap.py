@@ -79,19 +79,19 @@ def _krx_index_listings(idx1, idx2, date=None):
     return df
 
 class KrxSnapReader:
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, ticker):
+        self.ticker = ticker
 
     def read(self):
-        if self.path == 'KRX/INDEX/LIST': # 지수목록
+        if self.ticker == 'KRX/INDEX/LIST': # 지수목록
             df = _krx_index_codes()
             df['Code'] = df['full_code'] + df['short_code']
             df = df.rename(columns={'codeName':'Name', 'marketName':'Market'})
             return df[['Code', 'Name', 'Market']]
-        elif self.path.startswith('KRX/INDEX/STOCK/'): # 지수구성종목
-            code = self.path.split('/')[-1]
+        elif self.ticker.startswith('KRX/INDEX/STOCK/'): # 지수구성종목
+            code = self.ticker.split('/')[-1]
             df = _krx_index_listings(code[0], code[1:])
             return df
         else:
-            raise NotImplementedError(f'"{self.path}" is not implemented')
+            raise NotImplementedError(f'"{self.ticker}" is not implemented')
             

@@ -60,10 +60,10 @@ class YahooDailyReader:
         sym_list = [s.strip() for s in self.symbol.split(',') if s]
         for sym in sym_list:
             df = _yahoo_data_reader(sym, self.exchange, self.start, self.end)
-            if len(df):
-                df_list.append(df)
-        merged = pd.concat([x['Adj Close'] for x in df_list], axis=1)
-        merged.columns = sym_list
+            df = df[['Adj Close']]
+            df = df.rename(columns={'Adj Close':sym})
+            df_list.append(df)
+        merged = pd.concat(df_list, axis=1)
         merged.attrs = {'exchange':self.exchange, 'source':'YAHOO', 'data':'PRICE'}
         return merged
     

@@ -2,9 +2,9 @@ from .data import (DataReader)
 from .data import (SnapDataReader)
 from .data import (StockListing)
 from .data import (EtfListing)
-from . import (chart)
+from .chart import (plot)
 
-__version__ = '0.9.80'
+__version__ = '0.9.90'
 
 __all__ = [
     '__version__', 
