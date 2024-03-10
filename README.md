@@ -170,11 +170,6 @@ df = fdr.SnapDataReader('KRX/INDEX/STOCK/1001') # KOSPI 지수구성종목
 df = fdr.SnapDataReader('KRX/INDEX/STOCK/1028') # 코스피 200
 df = fdr.SnapDataReader('KRX/INDEX/STOCK/5106') # KRX ESG Leaders 150 테마 지수 구성종목
 
-
-# 캔들차트
-df = fdr.DataReader('005930', '2023-01-01', '2023-06-30')
-
-fdr.chart.plot(df)
 ```
 
 ## Using FinanceDataReader
