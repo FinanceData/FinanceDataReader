@@ -10,10 +10,14 @@ import ssl
 class KrxMarcapListing:
     def __init__(self, market):
         self.market = market
-
+        self.headers = {
+            'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+            'Referer': 'http://data.krx.co.kr/'
+            }
+        
     def read(self):
         url = 'http://data.krx.co.kr/comm/bldAttendant/executeForResourceBundle.cmd?baseName=krx.mdc.i18n.component&key=B128.bld'
-        j = json.loads(requests.get(url).text)
+        j = json.loads(requests.get(url, headers=self.headers).text)
         date_str = j['result']['output'][0]['max_work_dt']
         
         mkt_map = {'KRX-MARCAP':'ALL', 'KRX':'ALL', 'KOSPI':'STK', 'KOSDAQ':'KSQ', 'KONEX':'KNX'}
@@ -29,7 +33,7 @@ class KrxMarcapListing:
             'money': '1',
             'csvxls_isNo': 'false',
         }
-        j = json.loads(requests.post(url, data).text)
+        j = json.loads(requests.post(url, headers=self.headers, data=data).text)
         df = pd.DataFrame(j['OutBlock_1'])
         df = df.replace(',', '', regex=True)
         numeric_cols = ['CMPPREVDD_PRC', 'FLUC_RT', 'TDD_OPNPRC', 'TDD_HGPRC', 'TDD_LWPRC', 
@@ -51,7 +55,11 @@ class KrxMarcapListing:
 class KrxStockListing: # descriptive information
     def __init__(self, market):
         self.market = market
-    
+        self.headers = {
+            'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+            'Referer': 'http://data.krx.co.kr/'
+            }
+        
     def read(self):
         # KRX 상장회사목록
         # For MacOS, SSL CERTIFICATION VERIFICATION ERROR
@@ -62,7 +70,7 @@ class KrxStockListing: # descriptive information
             raise ValueError(f"market shoud be one of {mkt_list}")
         
         url = 'http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13'
-        r = requests.get(url)
+        r = requests.get(url, headers=self.headers)
         dfs = pd.read_html(io.StringIO(r.text), header=0)
         df_listing = dfs[0]
         cols_ren = {'회사명':'Name', '종목코드':'Code', '업종':'Sector', '주요제품':'Industry', 
@@ -74,7 +82,8 @@ class KrxStockListing: # descriptive information
 
         # KRX 주식종목검색
         data = {'bld': 'dbms/comm/finder/finder_stkisu',}
-        r = requests.post('http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd', data=data)
+        url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
+        r = requests.post(url, data, headers=self.headers)
         jo = json.loads(r.text)
         df_finder = pd.DataFrame(jo['block1'])
         
@@ -104,6 +113,10 @@ class KrxStockListing: # descriptive information
 class KrxDelisting:
     def __init__(self, market):
         self.market = market
+        self.headers = {
+            'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+            'Referer': 'http://data.krx.co.kr/'
+            }
 
     def read(self):
         data = {
@@ -117,10 +130,8 @@ class KrxDelisting:
             'csvxls_isNo': 'true',
         }
 
-        headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',}
-
         url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
-        r = requests.post(url, data, headers=headers)
+        r = requests.post(url, data, headers=self.headers)
         j = json.loads(r.text)
         df = pd.DataFrame(j['output'])
         col_map = {'ISU_CD':'Symbol', 'ISU_NM':'Name', 'MKT_NM':'Market', 
@@ -143,10 +154,14 @@ class KrxDelisting:
 class KrxAdministrative:
     def __init__(self, market):
         self.market = market
-
+        self.headers = {
+            'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+            'Referer': 'http://data.krx.co.kr/'
+            }
+        
     def read(self):
         url = "http://kind.krx.co.kr/investwarn/adminissue.do?method=searchAdminIssueSub&currentPageSize=5000&forward=adminissue_down"
-        r = requests.get(url)
+        r = requests.get(url,headers=self.headers)
         df = pd.read_html(io.StringIO(r.text), header=0, encoding='euc-kr')[0]
         df['지정일'] = pd.to_datetime(df['지정일'])
         col_map = {'종목코드':'Symbol', '종목명':'Name', '지정일':'DesignationDate', '지정사유':'Reason'}
