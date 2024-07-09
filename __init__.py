@@ -4,7 +4,7 @@ from .data import (StockListing)
 from .data import (EtfListing)
 from .chart import (plot)
 
-__version__ = '0.9.90'
+__version__ = '0.9.91'
 
 __all__ = [
     '__version__', 

@@ -11,7 +11,8 @@ __KRX_CODES = pd.DataFrame()
 def _krx_fullcode(code):
     global __KRX_CODES
     if len(__KRX_CODES) == 0:
-        headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',}
+        headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+                   'Referer': 'http://data.krx.co.kr/', }
         data = {
             'locale': 'ko_KR',
             'mktsel': 'ALL',
@@ -29,7 +30,8 @@ def _krx_fullcode(code):
     return __KRX_CODES.loc[code]['full_code']
 
 def _krx_index_price_2years(idx1, idx2, from_date, to_date):
-    headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',}
+    headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+               'Referer': 'http://data.krx.co.kr/', }
     data = {
         'bld': 'dbms/MDC/STAT/standard/MDCSTAT00301',
         'indIdx': idx1,
@@ -88,7 +90,6 @@ def _krx_index_price(idx1, idx2, from_date, to_date):
     return df.loc[from_date:to_date]
 
 def _krx_stock_price(full_code, from_date, to_date):
-    headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',}
     data = {
         'bld': 'dbms/MDC/STAT/standard/MDCSTAT01701',
         'locale': 'ko_KR',
@@ -103,8 +104,15 @@ def _krx_stock_price(full_code, from_date, to_date):
         'csvxls_isNo': 'false',
     }
 
+    headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+               'Referer': 'http://data.krx.co.kr/', }
+
     url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
     r = requests.post(url, data, headers=headers)
+    if r.status_code != 200:
+        print(r.status_code, r.reason, 'Period is up to 2 years')
+        raise ValueError(f'{r.status_code} - {r.reason}')
+
     df = pd.DataFrame(r.json()['output'])
     col_map = {'TRD_DD':'Date', 'ISU_CD':'Code', 'ISU_NM':'Name', 'MKT_NM':'Market', 
                 'SECUGRP_NM':'SecuGroup', 'TDD_CLSPRC':'Close', 'FLUC_TP_CD':'UpDown', 
@@ -130,6 +138,10 @@ class KrxDailyReader:
         self.symbol = symbol
         self.start = datetime(1990,1,1) if start==None else pd.to_datetime(start)
         self.end = datetime.today() if end==None else pd.to_datetime(end)
+
+        if start==None and end==None:
+            self.end = datetime.today()
+            self.start = datetime.today() - timedelta(days=365*2-1)
 
     def read(self):
         full_code = _krx_fullcode(self.symbol)
@@ -176,7 +188,8 @@ class KrxDelistingReader:
         self.end = datetime(2100,1,1) if end==None else pd.to_datetime(end)
 
     def read(self):
-        headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',}
+        headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+                'Referer': 'http://data.krx.co.kr/', }
         data = {
             'mktsel': 'ALL',
             'searchText': '',
