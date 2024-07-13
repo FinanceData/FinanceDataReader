@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "FinanceDataReader"
+version = "0.1.0"
+authors = [{name = "loopinf", email = "loopinf@gmail.com"}]
+description = "A package for fetching and visualizing financial data"
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+urls = {
+    "Homepage": "https://github.com/loopinf/FinanceDataReader"
+}
+
+[project.optional-dependencies]
+extras = [
+    "numpy",
+    "pandas",
+    # "plotly",
+    # Add any other dependencies your package might optionally use
+]
+
+[tool.setuptools]
+install-requires = [
+    "numpy",
+    "pandas",
+    # "plotly",
+    # Add any other dependencies your package needs
+]
