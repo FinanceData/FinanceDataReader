@@ -118,14 +118,14 @@ class KrxDelisting:
             'Referer': 'http://data.krx.co.kr/'
             }
 
-    def read(self):
+    def read(self, from_date, to_date):
         data = {
             'bld': 'dbms/MDC/STAT/issue/MDCSTAT23801',
             'mktId': 'ALL',
             'isuCd': 'ALL',
             'isuCd2': 'ALL',
-            'strtDd': '19900101',
-            'endDd': '22001231',
+            'strtDd': from_date if isinstance(from_date, str) else from_date.strftime('%Y%m%d'),
+            'endDd': to_date if isinstance(to_date, str) else to_date.strftime('%Y%m%d'),
             'share': '1',
             'csvxls_isNo': 'true',
         }
