@@ -13,7 +13,10 @@ setup(
     install_requires=[
         'numpy',
         'pandas',
-        # 'plotly',
+        'requests',
+        'bs4',
+        'tqdm',
+        'plotly',
         # Add any other dependencies your package needs
     ],
     classifiers=[
