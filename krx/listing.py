@@ -34,7 +34,6 @@ class KrxMarcapListing:
             'csvxls_isNo': 'false',
         }
         html_text = requests.post(url, headers=self.headers, data=data).text
-        print(html_text)
         j = json.loads(html_text)
         df = pd.DataFrame(j['OutBlock_1'])
         df = df.replace(',', '', regex=True)
