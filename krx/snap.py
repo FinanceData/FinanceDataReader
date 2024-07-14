@@ -4,6 +4,9 @@
 import requests
 import pandas as pd
 
+_krx_headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+               'Referer': 'http://data.krx.co.kr/', }
+
 def _krx_last_working_day(date=None):
     '''지정한 날짜에서 가장 가까운 영업일
     * date: 날짜 (지정하지 않으면 오늘 포함 가장 가까운 영업일)
@@ -14,7 +17,7 @@ def _krx_last_working_day(date=None):
          'http://data.krx.co.kr/comm/bldAttendant/executeForResourceBundle.cmd?'
         f'baseName=krx.mdc.i18n.component&key=B161.bld&inDate={date_str}'
     )
-    r = requests.get(url)
+    r = requests.get(url, headers=_krx_headers)
     if '서비스 에러' in r.text:
         print('Servie Error')
 
@@ -33,7 +36,7 @@ def _krx_index_codes():
         'searchText':'',
         'bld': 'dbms/comm/finder/finder_equidx',
     }
-    r = requests.post(url, form_data)
+    r = requests.post(url, form_data, headers=_krx_headers)
     j = r.json()
     krx_index = pd.DataFrame(j['block1'])
     krx_index = krx_index.sort_values(['full_code','short_code'])
@@ -58,7 +61,7 @@ def _krx_index_listings(idx1, idx2, date=None):
         'money': '1',
         'csvxls_isNo': 'false',
     }
-    r = requests.post(url, form_data)
+    r = requests.post(url, form_data, headers=_krx_headers)
     j = r.json()
     df = pd.DataFrame(j['output'])
 

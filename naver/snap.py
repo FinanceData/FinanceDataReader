@@ -531,7 +531,6 @@ class NaverSnapReader:
                 usage_text = '''Usage examples:
                 NAVER/FINSTATE/005930
                 NAVER/FINSTATE-Q/005930
-                NAVER/FINSTATE-Q/005930
                 NAVER/FINSTATE-Q1/005930
                 NAVER/FINSTATE-Y/005930
                 NAVER/FINSTATE-Y3/005930

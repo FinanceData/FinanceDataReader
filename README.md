@@ -1,7 +1,7 @@
 # FinanceDataReader
 [FinanceData.KR](FinanceData.KR) Open Source Financial data reader 
 
-**2018-2023 [FinanceData.KR]()**
+**2018-2024 [FinanceData.KR]()**
 
 # Overview
 The FinanceDataReader is financial data reader(crawler) for finance. <br>
@@ -169,7 +169,30 @@ df = fdr.SnapDataReader('KRX/INDEX/LIST') # KRX 전체 지수목록
 df = fdr.SnapDataReader('KRX/INDEX/STOCK/1001') # KOSPI 지수구성종목
 df = fdr.SnapDataReader('KRX/INDEX/STOCK/1028') # 코스피 200
 df = fdr.SnapDataReader('KRX/INDEX/STOCK/5106') # KRX ESG Leaders 150 테마 지수 구성종목
+```
 
+## 데이터 소스 지정
+```python
+# 지정하지 않은 경우 (NAVER에서 가져오며 2000년 이후 데이터)
+fdr.DataReader('000100') # (기간 지정 하지 않은 경우) 
+fdr.DataReader('000100', '2023') # 2023년 ~ 현재까지 가격 데이터
+fdr.DataReader('000100', '2023', '2024') # 2023년 데이터
+
+# KRX (2000년 이전 데이터 가능, 상세한 추가 필드)
+fdr.DataReader('KRX:000100') # 1995-05-02 ~ 현재 (2년단위로 가져와  합쳐서 반환)
+fdr.DataReader('KRX:000100', '2020') # 2020년 ~ 현재까지 가격 데이터
+fdr.DataReader('KRX:000100', '1900') # 최대 데이터 (1995-05-02 ~ 현재까지)
+fdr.DataReader('KRX:000100', '2023-09-23', '2024-12-31') # (기간 지정) 2년 단위로 가져와 병합
+
+# NAVER (2000년 이후 데이터)
+fdr.DataReader('NAVER:000100') # 2000년~현재 데이터
+fdr.DataReader('NAVER:000100', '2023') # 2023년 ~ 현재까지 가격 데이터
+fdr.DataReader('NAVER:000100', '2023', '2024') # 2023년 데이터
+
+# YAHOO
+fdr.DataReader('YAHOO:000100.KS') # 2000년 이후 데이터
+fdr.DataReader('YAHOO:000100.KS', '2023') # 2023년 ~ 현재까지 가격 데이터
+fdr.DataReader('YAHOO:000100.KS', '2023', '2024') # 2023년 데이터
 ```
 
 ## Using FinanceDataReader

@@ -79,6 +79,10 @@ def DataReader(symbol:str, start=None, end=None, exchange=None, data_source=None
         
         # 1-3) KRX stocks
         code = codes.split(',')[0]
+        if code in krx_index_symbol_map:
+            symbol = krx_index_symbol_map[symbol]
+            return KrxIndexReader(symbol, start, end).read()
+
         if re.match(r'\d{5}[0-9KLMN]', code): 
             # Naver is default source for KRX stocks  
             return NaverDailyReader(codes, start, end).read()
@@ -139,7 +143,7 @@ def SnapDataReader(ticker: str) -> pd.DataFrame:
         msg = f'"{ticker}" is not implemented'
         raise NotImplementedError(msg)
 
-def StockListing(market: str) -> pd.DataFrame:
+def StockListing(market: str, start=None, end=None) -> pd.DataFrame:
     '''
     read stock list of stock exchanges
     * market: 'KRX', 'KOSPI', 'KOSDAQ', 'KONEX', 'KRX-MARCAP', 
@@ -157,7 +161,7 @@ def StockListing(market: str) -> pd.DataFrame:
     elif market in ['NASDAQ', 'NYSE', 'AMEX', 'SSE', 'SZSE', 'HKEX', 'TSE', 'HOSE']:
         return NaverStockListing(market).read()
     elif market in ['KRX-DELISTING' ]:
-        return KrxDelisting(market).read()
+        return KrxDelisting(market, start, end).read()
     elif market in ['KRX-ADMINISTRATIVE', 'KRX-ADMIN' ]:
         return KrxAdministrative(market).read()
     elif market in ['S&P500', 'SP500']:

@@ -33,7 +33,9 @@ class KrxMarcapListing:
             'money': '1',
             'csvxls_isNo': 'false',
         }
-        j = json.loads(requests.post(url, headers=self.headers, data=data).text)
+        html_text = requests.post(url, headers=self.headers, data=data).text
+        print(html_text)
+        j = json.loads(html_text)
         df = pd.DataFrame(j['OutBlock_1'])
         df = df.replace(',', '', regex=True)
         numeric_cols = ['CMPPREVDD_PRC', 'FLUC_RT', 'TDD_OPNPRC', 'TDD_HGPRC', 'TDD_LWPRC', 
@@ -59,7 +61,7 @@ class KrxStockListing: # descriptive information
             'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
             'Referer': 'http://data.krx.co.kr/'
             }
-        
+
     def read(self):
         # KRX 상장회사목록
         # For MacOS, SSL CERTIFICATION VERIFICATION ERROR
@@ -110,44 +112,79 @@ class KrxStockListing: # descriptive information
         merged = merged.drop_duplicates(subset='Code').reset_index(drop=True)
         return merged
 
-class KrxDelisting:
-    def __init__(self, market):
-        self.market = market
-        self.headers = {
-            'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
-            'Referer': 'http://data.krx.co.kr/'
-            }
+def _krx_delisting_2years(from_date, to_date):
+    data = {
+        'bld': 'dbms/MDC/STAT/issue/MDCSTAT23801',
+        'mktId': 'ALL',
+        'isuCd': 'ALL',
+        'isuCd2': 'ALL',
+        'strtDd': from_date.strftime("%Y%m%d"),
+        'endDd': to_date.strftime("%Y%m%d"),
+        'share': '1',
+        'csvxls_isNo': 'true',
+    }
+    _krx_headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+                    'Referer': 'http://data.krx.co.kr/', }
+    url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
 
-    def read(self):
-        data = {
-            'bld': 'dbms/MDC/STAT/issue/MDCSTAT23801',
-            'mktId': 'ALL',
-            'isuCd': 'ALL',
-            'isuCd2': 'ALL',
-            'strtDd': '19900101',
-            'endDd': '22001231',
-            'share': '1',
-            'csvxls_isNo': 'true',
-        }
+    r = requests.post(url, data, headers=_krx_headers)
+    try:
+        jo = r.json()
+    except:
+        msg = r.text
+        raise ValueError(msg)
 
-        url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
-        r = requests.post(url, data, headers=self.headers)
-        j = json.loads(r.text)
-        df = pd.DataFrame(j['output'])
-        col_map = {'ISU_CD':'Symbol', 'ISU_NM':'Name', 'MKT_NM':'Market', 
-                   'SECUGRP_NM':'SecuGroup', 'KIND_STKCERT_TP_NM':'Kind',
-                   'LIST_DD': 'ListingDate', 'DELIST_DD':'DelistingDate', 'DELIST_RSN_DSC':'Reason', 
-                   'ARRANTRD_MKTACT_ENFORCE_DD':'ArrantEnforceDate', 'ARRANTRD_END_DD':'ArrantEndDate', 
-                   'IDX_IND_NM':'Industry', 'PARVAL':'ParValue', 'LIST_SHRS':'ListingShares', 
-                   'TO_ISU_SRT_CD':'ToSymbol', 'TO_ISU_ABBRV':'ToName' }
+    df = pd.DataFrame(jo['output'])
+    col_map = {'ISU_CD':'Symbol', 'ISU_NM':'Name', 'MKT_NM':'Market', 
+                'SECUGRP_NM':'SecuGroup', 'KIND_STKCERT_TP_NM':'Kind',
+                'LIST_DD': 'ListingDate', 'DELIST_DD':'DelistingDate', 'DELIST_RSN_DSC':'Reason', 
+                'ARRANTRD_MKTACT_ENFORCE_DD':'ArrantEnforceDate', 'ARRANTRD_END_DD':'ArrantEndDate', 
+                'IDX_IND_NM':'Industry', 'PARVAL':'ParValue', 'LIST_SHRS':'ListingShares', 
+                'TO_ISU_SRT_CD':'ToSymbol', 'TO_ISU_ABBRV':'ToName' }
 
-        df = df.rename(columns=col_map)
+    df = df.rename(columns=col_map)
+    if len(df):
         df['ListingDate'] = pd.to_datetime(df['ListingDate'], format='%Y/%m/%d')
         df['DelistingDate'] = pd.to_datetime(df['DelistingDate'], format='%Y/%m/%d')
         df['ArrantEnforceDate'] = pd.to_datetime(df['ArrantEnforceDate'], format='%Y/%m/%d', errors='coerce')
         df['ArrantEndDate'] = pd.to_datetime(df['ArrantEndDate'], format='%Y/%m/%d', errors='coerce')
         df['ParValue'] = pd.to_numeric(df['ParValue'].str.replace(',', ''), errors='coerce')
         df['ListingShares'] = pd.to_numeric(df['ListingShares'].str.replace(',', ''), errors='coerce')
+    return df
+
+def _krx_delisting(from_date, to_date):
+    df_list = []
+    _start = from_date
+    _end = datetime(_start.year+2, _start.month, _start.day) - timedelta(days=1)
+    while True: 
+        df = _krx_delisting_2years(_start, _end)
+        df_list.append(df)
+        if to_date <= _end: 
+            break
+        _start = _end + timedelta(days=1)
+        _end = datetime(_start.year+2, _start.month, _start.day) - timedelta(days=1)
+
+    df = pd.concat(df_list)
+    if(len(df) == 0):
+        print(f'No data found for KRX Delisting')
+        return df
+    return df[(from_date <= df['DelistingDate']) & (df['DelistingDate'] <= to_date)]
+
+class KrxDelisting:
+    def __init__(self, market, start=None, end=None):
+        self.market = market
+        self.headers = {
+            'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+            'Referer': 'http://data.krx.co.kr/'
+            }
+        
+        self.start = datetime(1960,1,1) if start==None else pd.to_datetime(start)
+        self.start = datetime(1960,1,1) if self.start < datetime(1960,1,1) else self.start
+        self.end = datetime.today() if end==None else pd.to_datetime(end)
+        
+    def read(self):
+        df = _krx_delisting(self.start, self.end)
+        df = df.reset_index(drop=True)
         df.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'LISTINGS'}
         return df
     
