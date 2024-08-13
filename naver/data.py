@@ -8,7 +8,7 @@ def _naver_data_reader(symbol, start, end):
     url = 'https://fchart.stock.naver.com/sise.nhn?timeframe=day&count=6000&requestType=0&symbol='
     r = requests.get(url + symbol)
 
-    data_list = re.findall('<item data=\"(.*?)\" />', r.text, re.DOTALL)
+    data_list = re.findall(r'<item data=\"(.*?)\" />', r.text, re.DOTALL)
     if len(data_list) == 0:
         print(f'"{symbol}" invalid symbol or has no data')
         return pd.DataFrame()

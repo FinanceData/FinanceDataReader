@@ -106,7 +106,7 @@ def _to_float(x, half=None):
     * x: 변환대상 값
     * half('l' 구분자):None=전체, 0=첫번째 절반, 1=두번째 절반
     '''
-    x = re.sub('[\t\n, 조억원배%]', '', str(x))
+    x = re.sub(r'[\t\n, 조억원배%]', '', str(x))
     if half != None and len(x.split('l')) > 1:
         return pd.to_numeric(x.split('l')[half], errors='coerce').item()
     return pd.to_numeric(x, errors='coerce').item()
@@ -226,7 +226,7 @@ def stock_price_day(code, start=None, end=None):
     url = 'https://fchart.stock.naver.com/sise.nhn?timeframe=day&count=6000&requestType=0&symbol='
     r = requests.get(url + code)
 
-    data_list = re.findall('<item data=\"(.*?)\" />', r.text, re.DOTALL)
+    data_list = re.findall(r'<item data=\"(.*?)\" />', r.text, re.DOTALL)
     if len(data_list) == 0:
         return pd.DataFrame()
     data = '\n'.join(data_list)
@@ -284,7 +284,7 @@ def finstate_detail(code, rpt='0', freq='0', gubun='MAIN'):
     # encparam 가져오기
     url = 'https://navercomp.wisereport.co.kr/v2/company/c1010001.aspx?cmp_cd=005930'
     html_text = requests.get(url).text
-    encparam = re.findall ("encparam: '(.*?)'", html_text)[0]
+    encparam = re.findall (r"encparam: '(.*?)'", html_text)[0]
 
     url = f'https://navercomp.wisereport.co.kr/v2/company/cF3002.aspx?cmp_cd={code}&frq={freq}&rpt={rpt}&finGubun={gubun}&frqTyp={freq}&cn=&encparam={encparam}'
     # 페이지 가져오기
@@ -299,7 +299,7 @@ def finstate_detail(code, rpt='0', freq='0', gubun='MAIN'):
     jo_yymm = jo['YYMM'][:6]
     date_str_list = []
     for yymm in jo_yymm:
-        m = re.search('(\d{4}/\d{0,2}).*', yymm)
+        m = re.search(r'(\d{4}/\d{0,2}).*', yymm)
         date_str_list.append(m.group(1) if m else '')
     data_n_list = ['DATA' + str(i) for i in range(1,7)]
     yymm_cols = zip(data_n_list, date_str_list)
@@ -328,10 +328,10 @@ def finstate_summary(code, fin_type='0', freq='Y'):
     url = 'https://navercomp.wisereport.co.kr/v2/company/c1010001.aspx?cmp_cd=005930'
     html_text = requests.get(url).text
 
-    if not re.search("encparam: '(.*?)'", html_text):
+    if not re.search(r"encparam: '(.*?)'", html_text):
         print('encparam not found') # encparam이 없는 경우
         return None
-    encparam = re.findall ("encparam: '(.*?)'", html_text)[0]
+    encparam = re.findall (r"encparam: '(.*?)'", html_text)[0]
 
     url = f'https://navercomp.wisereport.co.kr/v2/company/ajax/cF1001.aspx?cmp_cd={code}&fin_typ={fin_type}&freq_typ={freq}&encparam={encparam}'
     r = requests.get(url, headers={'Referer': url})
@@ -339,7 +339,7 @@ def finstate_summary(code, fin_type='0', freq='Y'):
     df = df_list[1]
     df.columns = [col[1] for col in df.columns]
     df.set_index('주요재무정보', inplace=True)
-    df.columns = [re.sub('[^\.\d]', '', col) for col in df.columns]
+    df.columns = [re.sub(r'[^\.\d]', '', col) for col in df.columns]
     df.columns = [pd.to_datetime(col, format='%Y%m', errors='coerce') for col in df.columns]
     df = df.transpose()
     df.index.name = '날짜'
@@ -358,10 +358,10 @@ def invest_index(code, rpt='5', frq='1', finGubun='IFRSL'):
     url = 'http://companyinfo.stock.naver.com/v1/company/c1040001.aspx?cmp_cd=005930'
     html_text = requests.get(url).text
 
-    if not re.search("encparam: '(.*?)'", html_text):
+    if not re.search(r"encparam: '(.*?)'", html_text):
         print('encparam not found') # encparam이 없는 경우
         return None
-    encparam = re.findall ("encparam: '(.*?)'", html_text)[0]
+    encparam = re.findall (r"encparam: '(.*?)'", html_text)[0]
 
     # 투자지표 데이터 가져오기
     url = f'http://companyinfo.stock.naver.com/v1/company/cF4002.aspx?' \
@@ -376,7 +376,7 @@ def invest_index(code, rpt='5', frq='1', finGubun='IFRSL'):
     jo_yymm = jo['YYMM'][:6]
     date_str_list = []
     for yymm in jo_yymm:
-        m = re.search('(\d{4}/\d{0,2}).*', yymm)
+        m = re.search(r'(\d{4}/\d{0,2}).*', yymm)
         date_str_list.append(m.group(1) if m else '')
     data_n_list = ['DATA' + str(i) for i in range(1,7)]
     yymm_cols = zip(data_n_list, date_str_list)
