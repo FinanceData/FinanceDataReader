@@ -308,7 +308,7 @@ def finstate_detail(code, rpt='0', freq='0', gubun='MAIN'):
     if not len(df):
         print(f'no data found {code}')
         return df
-    df['ACC_NM'] = df['ACC_NM'].str.strip().replace('[\.*\[\]]', '', regex=True)
+    df['ACC_NM'] = df['ACC_NM'].str.strip().replace(r'[\.*\[\]]', '', regex=True)
     df.set_index(['ACCODE', 'ACC_NM'], inplace=True)
     df = df.iloc[:, 5:11] # 날짜 컬럼만 추출
     df = df.T # Transpose (컬럼, 인덱스 바꾸기)
@@ -382,7 +382,7 @@ def invest_index(code, rpt='5', frq='1', finGubun='IFRSL'):
     yymm_cols = zip(data_n_list, date_str_list)
     cols_map = dict(yymm_cols)
     df.rename(columns=cols_map, inplace=True)
-    df['ACC_NM'] = df['ACC_NM'].str.strip().replace('[\.*\[\]]', '', regex=True)
+    df['ACC_NM'] = df['ACC_NM'].str.strip().replace(r'[\.*\[\]]', '', regex=True)
     df = df.drop_duplicates(['ACCODE', 'ACC_NM'], keep='last')
     df.set_index(['ACCODE', 'ACC_NM'], inplace=True)
     df = df.iloc[:, 5:11] # 날짜 컬럼만 추출

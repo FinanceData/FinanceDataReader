@@ -74,7 +74,7 @@ def _krx_index_listings(idx1, idx2, date=None):
         print('No data found')
         return pd.DataFrame({}, columns=cols_map.values())
 
-    df = df.replace(',', '', regex=True)
+    df = df.replace(r',', '', regex=True)
     numeric_cols = ['TDD_CLSPRC', 'STR_CMP_PRC', 'FLUC_RT', 'MKTCAP']
     df[numeric_cols] = df[numeric_cols].apply(pd.to_numeric, errors='coerce')
 
