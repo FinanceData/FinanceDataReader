@@ -27,7 +27,7 @@ dependencies = [
     "requests-file",
     "lxml",
     "tqdm",
-    "bs4",
+    "beautifulsoup4",
 ]
 
 [project.urls]
