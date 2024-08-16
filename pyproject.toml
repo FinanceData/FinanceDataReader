@@ -38,6 +38,7 @@ Repository = "https://github.com/financedata/financedatareader"
 chart = ["plotly"]
 notebook = ["ipykernel", "nbformat>=4.2.0"]
 test = ["pytest"]
+docs = ["sphinx"]
 
 [tool.rye]
 managed = true
