@@ -28,6 +28,7 @@ dependencies = [
     "lxml",
     "tqdm",
     "beautifulsoup4",
+    "plotly",
 ]
 
 [project.urls]
@@ -35,14 +36,13 @@ Homepage = "http://www.financedata.kr"
 Repository = "https://github.com/financedata/financedatareader"
 
 [project.optional-dependencies]
-chart = ["plotly"]
 notebook = ["ipykernel", "nbformat>=4.2.0"]
 test = ["pytest"]
 docs = ["sphinx"]
 
 [tool.rye]
 managed = true
-dev-dependencies = ["finance-datareader[chart,notebook,test]"]
+dev-dependencies = ["finance-datareader[notebook,test]"]
 
 [build-system]
 requires = ["hatchling"]
