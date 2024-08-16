@@ -27,6 +27,7 @@ dependencies = [
     "requests-file",
     "lxml",
     "tqdm",
+    "bs4",
 ]
 
 [project.urls]
