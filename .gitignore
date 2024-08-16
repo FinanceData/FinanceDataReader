@@ -12,3 +12,9 @@ docs/build
 *~
 .vscode
 .pytest_cache
+
+# pyenv
+.python-version
+# rye
+requirements.lock
+requirements-dev.lock
