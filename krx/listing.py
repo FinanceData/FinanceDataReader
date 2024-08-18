@@ -36,7 +36,7 @@ class KrxMarcapListing:
         html_text = requests.post(url, headers=self.headers, data=data).text
         j = json.loads(html_text)
         df = pd.DataFrame(j['OutBlock_1'])
-        df = df.replace(',', '', regex=True)
+        df = df.replace(r',', '', regex=True)
         numeric_cols = ['CMPPREVDD_PRC', 'FLUC_RT', 'TDD_OPNPRC', 'TDD_HGPRC', 'TDD_LWPRC', 
                         'ACC_TRDVOL', 'ACC_TRDVAL', 'MKTCAP', 'LIST_SHRS'] 
         df[numeric_cols] = df[numeric_cols].apply(pd.to_numeric, errors='coerce')

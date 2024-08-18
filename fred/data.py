@@ -32,7 +32,7 @@ class FredReader:
             print(f'"symbol {self.symbol}" not found')
             return None
         
-        fname = re.findall('filename="(.+)"', r.headers['content-disposition'])[0]
+        fname = re.findall(r'filename="(.+)"', r.headers['content-disposition'])[0]
         if fname=='fredgraph.zip':
             df_list = []
             with zipfile.ZipFile(BytesIO(r.content)) as zf:
