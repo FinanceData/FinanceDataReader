@@ -124,7 +124,7 @@ def SnapDataReader(ticker: str) -> pd.DataFrame:
     * symbol: code or ticker
 
     usage:
-        - fdr.SnapDataReader('ECOS/KEYSTAT') # 100대 경제지표 
+        - fdr.SnapDataReader('ECOS/KEYSTAT/LIST') # 100대 경제지표 
         - fdr.SnapDataReader('KRX/INDEX/LIST') # KRX 지수목록(KRX index list)
         - fdr.SnapDataReader('KRX/INDEX/STOCK/1001') # 지수구성종목 (1001: 코스피)
         - fdr.SnapDataReader('NAVER/STOCK/005930/FINSTATE') # 재무제표
