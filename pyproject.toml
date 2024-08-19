@@ -54,11 +54,7 @@ build-backend = "hatchling.build"
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = [
-    "src/FinanceDataReader",
-    "README.md",
-    "LICENSE.txt",           # FIXME
-]
+packages = ["src/FinanceDataReader"]
 
 [tool.hatch.build.targets.sdist]
 include = [
