@@ -62,4 +62,3 @@ include = [
     "README.md",
     "LICENSE.txt",           # FIXME
 ]
-exclude = ["*.pyc"]
