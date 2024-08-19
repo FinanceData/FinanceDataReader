@@ -2,13 +2,17 @@
 name = "finance-datareader"
 version = "0.9.93"
 description = "Financial data reader (price, stock list of markets)"
+maintainers = [{ name = "FinanceData.KR", email = "plusjune@financedata.kr" }]
 authors = [{ name = "FinanceData.KR", email = "plusjune@financedata.kr" }]
 readme = "README.md"
 license = { text = "MIT License" }
 keywords = ["data", "finance"]
 classifiers = [
+    "Operating System :: OS Independent",
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
+    "Programming Language :: Cython",
+    "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
@@ -18,7 +22,6 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: Implementation :: CPython",
 ]
 requires-python = ">= 3.5"
 dependencies = [
@@ -32,7 +35,6 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "http://www.financedata.kr"
 Repository = "https://github.com/financedata/financedatareader"
 
 [project.optional-dependencies]
@@ -52,4 +54,16 @@ build-backend = "hatchling.build"
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/FinanceDataReader"]
+packages = [
+    "src/FinanceDataReader",
+    "README.md",
+    "LICENSE.txt",           # FIXME
+]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/FinanceDataReader",
+    "README.md",
+    "LICENSE.txt",           # FIXME
+]
+exclude = ["*.pyc"]
