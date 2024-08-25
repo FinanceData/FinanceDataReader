@@ -16,7 +16,8 @@ docs/build
 # pyenv
 .python-version
 
-# rye
+# uv
+uv.lock
 requirements.lock
 requirements-dev.lock
 

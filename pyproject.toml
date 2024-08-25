@@ -14,16 +14,12 @@ classifiers = [
     "Programming Language :: Cython",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
-requires-python = ">= 3.5"
+requires-python = ">= 3.9"
 dependencies = [
     "pandas>=0.19.2",
     "requests>=2.3.0",
@@ -42,7 +38,7 @@ notebook = ["ipykernel", "nbformat>=4.2.0"]
 test = ["pytest"]
 docs = ["sphinx"]
 
-[tool.rye]
+[tool.uv]
 managed = true
 dev-dependencies = ["finance-datareader[notebook,test]"]
 
