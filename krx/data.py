@@ -30,7 +30,6 @@ def _krx_fullcode(code):
     return __KRX_CODES.loc[code]['full_code']
 
 def _krx_index_price_2years(idx1, idx2, from_date, to_date):
-    print(idx1, idx2, from_date, to_date)
     headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
                'Referer': 'http://data.krx.co.kr/', }
     data = {

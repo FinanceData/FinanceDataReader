@@ -1,6 +1,7 @@
 # FinanceDataReader
-# 2018-2022 [FinanceData.KR](https://financedata.github.io/) Open Source Financial data reader
+# 2018-2024 [FinanceData.KR](https://financedata.github.io/) Open Source Financial data reader
 
+import requests
 import pandas as pd
 import time
 from datetime import timedelta
@@ -30,17 +31,21 @@ def _yahoo_data_reader(symbol, exchange, start, end):
     end_ts = int(time.mktime(end.timetuple()))
 
     url = (
-        f'https://query1.finance.yahoo.com/v7/finance/download/{_map_symbol(symbol, exchange)}?'
-        f'period1={start_ts}&period2={end_ts}&interval=1d&events=history&includeAdjustedClose=true'
+        f'https://query2.finance.yahoo.com/v8/finance/chart/{_map_symbol(symbol, exchange)}?'
+        f'period1={start_ts}&period2={end_ts}&interval=1d&includeAdjustedClose=true'
     )
-    try:
-        df = pd.read_csv(url, parse_dates=True, index_col='Date')
-    except Exception as e:
-        print(e, f' - symbol "{symbol}" not found or invalid periods')
-        df = pd.DataFrame()
+    r = requests.get(url, headers={'user-agent': 'Mozilla/5.0 AppleWebKit/537.36'})
+    r.raise_for_status()
+    jo = r.json()
 
-    return df.loc[start:end]
+    index = pd.to_datetime(jo['chart']['result'][0]['timestamp'], unit='s').normalize()
+    values  = {**jo['chart']['result'][0]['indicators']['quote'][0], **jo['chart']['result'][0]['indicators']['adjclose'][0]}
 
+    col_map = {'open':'Open', 'high':'High', 'low':'Low', 'close':'Close', 'volume':'Volume', 'adjclose':'Adj Close'}
+    df = pd.DataFrame(data=values, index=index)
+    df = df.rename(columns=col_map) # columns rename
+    df = df[col_map.values()] # columns reorder
+    return df
     
 class YahooDailyReader:
     def __init__(self, symbol, start=None, end=None, exchange=None):
