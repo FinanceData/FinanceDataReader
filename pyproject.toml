@@ -1,6 +1,6 @@
 [project]
 name = "finance-datareader"
-version = "0.9.93"
+version = "0.9.94"
 description = "Financial data reader (price, stock list of markets)"
 maintainers = [{ name = "FinanceData.KR", email = "plusjune@financedata.kr" }]
 authors = [{ name = "FinanceData.KR", email = "plusjune@financedata.kr" }]
