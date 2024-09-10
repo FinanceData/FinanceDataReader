@@ -46,9 +46,6 @@ dev-dependencies = ["finance-datareader[notebook,test]"]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.hatch.metadata]
-allow-direct-references = true
-
 [tool.hatch.version]
 path = "src/FinanceDataReader/__init__.py"
 
