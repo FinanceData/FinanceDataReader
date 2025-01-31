@@ -31,14 +31,15 @@ class FredReader:
         if 'content-disposition' not in r.headers:
             print(f'"symbol {self.symbol}" not found')
             return None
-        
+
         fname = re.findall(r'filename="(.+)"', r.headers['content-disposition'])[0]
         if fname=='fredgraph.zip':
             df_list = []
             with zipfile.ZipFile(BytesIO(r.content)) as zf:
                 for zfn in zf.namelist():
-                    df = pd.read_csv(zf.open(zfn), parse_dates=['DATE'], na_values='.')
-                    df.set_index('DATE', inplace=True)
+                    df = pd.read_csv(zf.open(zfn), parse_dates=['observation_date'], na_values='.')
+                    df.set_index('observation_date', inplace=True)
+                    df.index = df.index.rename('DATE')
                     df.replace('.', '', inplace=True)
                     df_list.append(df)
             merged = pd.concat(df_list, axis=1)
@@ -46,10 +47,9 @@ class FredReader:
             return merged
 
         elif '.csv' in fname:
-            df = pd.read_csv(url, parse_dates=['DATE'], na_values='.')
-            df.set_index('DATE', inplace=True)
+            df = pd.read_csv(url, parse_dates=['observation_date'], na_values='.')
+            df.set_index('observation_date', inplace=True)
+            df.index = df.index.rename('DATE')
             df.replace('.', '', inplace=True)
             df.ffill(inplace=True)
             return df
-        
-        
