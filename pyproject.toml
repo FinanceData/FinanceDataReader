@@ -38,9 +38,14 @@ notebook = ["ipykernel", "nbformat>=4.2.0"]
 test = ["pytest"]
 docs = ["sphinx"]
 
+[dependency-groups]
+dev = [
+    "finance-datareader[notebook,test]",
+]
+
 [tool.uv]
 managed = true
-dev-dependencies = ["finance-datareader[notebook,test]"]
+default-groups = ["dev"]
 
 [build-system]
 requires = ["hatchling"]
