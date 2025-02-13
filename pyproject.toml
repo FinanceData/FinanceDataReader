@@ -1,0 +1,65 @@
+[project]
+name = "finance-datareader"
+dynamic = ["version"]
+description = "Financial data reader (price, stock list of markets)"
+maintainers = [{ name = "FinanceData.KR", email = "plusjune@financedata.kr" }]
+authors = [{ name = "FinanceData.KR", email = "plusjune@financedata.kr" }]
+readme = "README.md"
+license = { text = "MIT License" }
+keywords = ["data", "finance"]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Cython",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">= 3.9"
+dependencies = [
+    "pandas>=1.1.0",
+    "requests>=2.3.0",
+    "requests-file",
+    "lxml",
+    "tqdm",
+    "beautifulsoup4",
+    "plotly",
+]
+
+[project.urls]
+Repository = "https://github.com/financedata/financedatareader"
+
+[project.optional-dependencies]
+notebook = ["ipykernel", "nbformat>=4.2.0"]
+test = ["pytest"]
+docs = ["sphinx"]
+
+[dependency-groups]
+dev = [
+    "finance-datareader[notebook,test]",
+]
+
+[tool.uv]
+managed = true
+default-groups = ["dev"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/FinanceDataReader/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/FinanceDataReader"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/FinanceDataReader",
+    "README.md",
+    "LICENSE.txt",           # FIXME
+]

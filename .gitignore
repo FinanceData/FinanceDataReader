@@ -12,3 +12,14 @@ docs/build
 *~
 .vscode
 .pytest_cache
+
+# pyenv
+.python-version
+
+# uv
+uv.lock
+requirements.lock
+requirements-dev.lock
+
+# build
+/dist
