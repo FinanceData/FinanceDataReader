@@ -1,5 +1,5 @@
 # FinanceDataReader
-# 2018-2023 [FinanceData.KR]() Open Source Financial data reader
+# 2018-2025 [FinanceData.KR]() Open Source Financial data reader
 
 import pandas as pd
 import numpy as np
@@ -37,6 +37,8 @@ class FredReader:
             df_list = []
             with zipfile.ZipFile(BytesIO(r.content)) as zf:
                 for zfn in zf.namelist():
+                    if not zfn.endswith('.csv'):
+                        continue
                     df = pd.read_csv(zf.open(zfn), parse_dates=['observation_date'], na_values='.')
                     df.set_index('observation_date', inplace=True)
                     df.index.rename('DATE', inplace=True)
@@ -46,7 +48,7 @@ class FredReader:
             merged.ffill(inplace=True)
             return merged
 
-        elif '.csv' in fname:
+        elif fname.endswith('.csv'):
             df = pd.read_csv(url, parse_dates=['observation_date'], na_values='.')
             df.set_index('observation_date', inplace=True)
             df.index.rename('DATE', inplace=True)
