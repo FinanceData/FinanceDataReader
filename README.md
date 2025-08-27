@@ -127,29 +127,29 @@ stocks = fdr.StockListing('KOSPI') # KOSPI: 940 종목
 stocks = fdr.StockListing('KOSDAQ') # KOSDAQ: 1,597 종목
 stocks = fdr.StockListing('KONEX') # KONEX: 126 종목
 
-# KRX 전종목 목록 (설명 중심, 주식+펀드등 전종목)
+## KRX 전종목 목록 (설명 중심, 주식+펀드등 전종목)
 stocks = fdr.StockListing('KRX-DESC') # 한국거래소: 7,632 종목
 stocks = fdr.StockListing('KOSPI-DESC') # KOSPI: 5,897 종목
 stocks = fdr.StockListing('KOSDAQ-DESC') # KOSDAQ: 1,609 종목
 stocks = fdr.StockListing('KONEX-DESC') # KONEX: 126 종목
 
-# KRX 특수 종목 리스팅 (상장폐지 종목, 관리종목)
+## KRX 특수 종목 리스팅 (상장폐지 종목, 관리종목)
 stocks = fdr.StockListing('KRX-DELISTING') # 3천+ 종목 - 상장폐지 종목 전체
 stocks = fdr.StockListing('KRX-ADMIN') # 50+ 종목 - KRX 관리종목
 
-# US Market listings 미국 시장 거래소별 전종목 리스팅
+## US Market listings 미국 시장 거래소별 전종목 리스팅
 stocks = fdr.StockListing('S&P500') # S&P500: 503 종목  
 stocks = fdr.StockListing('NASDAQ') # 나스닥 (NASDAQ): 4천+ 종목
 stocks = fdr.StockListing('NYSE') # 뉴욕증권거래소 (NYSE): 3천+ 종목
 
-# Global Market listings 글로벌 시장 거래소별 전종목 리스팅
+## Global Market listings 글로벌 시장 거래소별 전종목 리스팅
 stocks = fdr.StockListing('SSE') # 상하이 증권거래소 (Shanghai Stock Exchange: SSE): 1천+ 종목
 stocks = fdr.StockListing('SZSE') # 선전 증권거래소(Shenzhen Stock Exchange: SZSE): 1천+ 종목
 stocks = fdr.StockListing('HKEX') # 홍콩 증권거래소(Hong Kong Exchange: HKEX): 2천5백+ 종목
 stocks = fdr.StockListing('TSE') # 도쿄 증권거래소(Tokyo Stock Exchange: TSE): 3천9백+ 종목
 stocks = fdr.StockListing('HOSE') # 호찌민 증권거래소(Ho Chi Minh City Stock Exchange: HOSE): 4백+ 종목
 
-# KRX ETFs
+## KRX ETFs
 etfs = fdr.StockListing('ETF/KR') # 한국 ETF 전종목
 
 # FRED 데이터
@@ -157,22 +157,35 @@ df = fdr.DataReader('FRED:M2') #  M2 통화량
 df = fdr.DataReader('FRED:NASDAQCOM') # NASDAQCOM 나스닥종합지수
 df = fdr.DataReader('FRED:T10Y2Y') # 미국 장단기금리차 (1980년 ~)
 
-# 달러 인덱스
+## 달러 인덱스
 df = fdr.DataReader('^NYICDX') # ICE U.S. Dollar Index (^NYICDX) 달러인덱스 (1980~현재)
 
-# FRED 데이터 여러 항목 한번에 
+## FRED 데이터 여러 항목 한번에 
 df = fdr.DataReader('FRED:M2,HSN1F,NASDAQCOM')  # M2 통화량, HSN1F 주택판매지수, NASDAQCOM 나스닥종합지수
 
-#  KRX지수및 지수 구 성종목
+##  KRX지수및 지수 구 성종목
 df = fdr.SnapDataReader('KRX/INDEX/LIST') # KRX 전체 지수목록
 
 df = fdr.SnapDataReader('KRX/INDEX/STOCK/1001') # KOSPI 지수구성종목
 df = fdr.SnapDataReader('KRX/INDEX/STOCK/1028') # 코스피 200
 df = fdr.SnapDataReader('KRX/INDEX/STOCK/5106') # KRX ESG Leaders 150 테마 지수 구성종목
-```
+
+## 재무제표
+fs = fdr.SnapDataReader('NAVER/FINSTATE/005930') # 연간 주재무제표
+
+fs = fdr.SnapDataReader('NAVER/FINSTATE-Y/005930') # 연간 주재무(='NAVER/FINSTATE-2Y/005930')
+fs = fdr.SnapDataReader('NAVER/FINSTATE-1Y/005930') # 연간 K-IFRS 별도
+fs = fdr.SnapDataReader('NAVER/FINSTATE-2Y/005930') # 연간 K-IFRS 연결
+fs = fdr.SnapDataReader('NAVER/FINSTATE-3Y/005930') # 연간 K-GAAP 개별
+fs = fdr.SnapDataReader('NAVER/FINSTATE-4Y/005930') # 연간 K-GAAP 연결
+
+fs = fdr.SnapDataReader('NAVER/FINSTATE-Q/005930') # 분기 주재무(='NAVER/FINSTATE-2Q/005930')
+fs = fdr.SnapDataReader('NAVER/FINSTATE-1Q/005930') # 분기 K-IFRS 별도
+fs = fdr.SnapDataReader('NAVER/FINSTATE-2Q/005930') # 분기 K-IFRS 연결
+fs = fdr.SnapDataReader('NAVER/FINSTATE-3Q/005930') # 분기 K-GAAP 개별
+fs = fdr.SnapDataReader('NAVER/FINSTATE-4Q/005930') # 분기 K-GAAP 연결
 
 ## 데이터 소스 지정
-```python
 # 지정하지 않은 경우 (NAVER에서 가져오며 2000년 이후 데이터)
 fdr.DataReader('000100') # (기간 지정 하지 않은 경우) 
 fdr.DataReader('000100', '2023') # 2023년 ~ 현재까지 가격 데이터
@@ -207,4 +220,4 @@ fdr.DataReader('YAHOO:000100.KS', '2023', '2024') # 2023년 데이터
 * [S&P500 가격 데이터 수집과 수익률 분석](https://nbviewer.jupyter.org/710b8f0a4bd9a8df91ae1be6c7e838b1) 
 * [S&P500 팩터 데이터 수집과 분석](https://nbviewer.jupyter.org/35a1b0d5248bc9b09513e53be437ac42)
 
-**2018-2024 [FinanceData.KR]()**
+**2018-2025 [FinanceData.KR]()**
