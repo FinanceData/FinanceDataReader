@@ -78,7 +78,7 @@ class KrxStockListing: # descriptive information
                             '상장일':'ListingDate', '결산월':'SettleMonth',  '대표자명':'Representative', 
                             '홈페이지':'HomePage', '지역':'Region', }
         df_listing = df_listing.rename(columns = cols_ren)
-        df_listing['Code'] = df_listing['Code'].apply(lambda x: '{:06d}'.format(x))
+        df_listing['Code'] = df_listing['Code'].str.zfill(6)
         df_listing['ListingDate'] = pd.to_datetime(df_listing['ListingDate'])
 
         # KRX 주식종목검색
