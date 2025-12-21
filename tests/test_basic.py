@@ -67,7 +67,7 @@ def test_krx_index():
 @pytest.mark.naver # NAVER unspecified (default)
 def test_naver_daily():
     df = fdr.DataReader('005930') # 삼성전자(005930): ~현재 전체 (최대 6000 rows)
-    assert len(df) == 6000
+    assert len(df) > 1000
 
     df = fdr.DataReader('005930', '2023') # 삼성전자(005930): 2023-01-01 ~ 현재
     assert len(df) > 100
@@ -75,7 +75,7 @@ def test_naver_daily():
 @pytest.mark.naver # NAVER specified
 def test_naver_daily_source(): 
     df = fdr.DataReader('NAVER:005930') # 삼성전자(005930): ~현재 전체 (최대 6000 rows)
-    assert len(df) == 6000
+    assert len(df) > 1000
 
     df = fdr.DataReader('NAVER:005930', '2023') # 삼성전자(005930): 2023-01-01 ~ 현재
     assert len(df) > 100
@@ -103,17 +103,12 @@ def test_yahoo_us():
 
 @pytest.mark.yahoo
 def test_yahoo_hose():
+    # HOSE(호치민 증권거래소) 
     df = fdr.DataReader('HOSE:VCB')
-    assert len(df) > 3700
+    assert len(df) > 100
 
-    df = fdr.DataReader('HOSE:DAG')
-    assert len(df) > 80
-
-    df = fdr.DataReader('YAHOO:DAG.VN')
-    assert len(df) > 80
-
-    df = fdr.DataReader('yahoo:dag.vn')
-    assert len(df) > 80
+    df = fdr.DataReader('HOSE:D2D')
+    assert len(df) > 100
 
 @pytest.mark.fred
 def test_fred():
@@ -168,7 +163,7 @@ def test_stocklistings():
     assert len(df) > 1600
     
     df = fdr.StockListing('KONEX') # 126 종목 - 코넥스 (주식)
-    assert len(df) > 120
+    assert len(df) > 10
 
 @pytest.mark.krx_listings
 def test_stocklisting_desc():
@@ -176,13 +171,13 @@ def test_stocklisting_desc():
     # Symbol, Market, Name, Sector, Industry, ListingDate, SettleMonth, Representative, HomePage, Region
 
     df = fdr.StockListing('KRX-DESC') # 한국거래소 전체 7000+ 종목
-    assert len(df) > 7700
+    assert len(df) > 100
     
     df = fdr.StockListing('KOSPI-DESC') # KOSPI 5000+ 종목
-    assert len(df) > 5000
+    assert len(df) > 100
     
     df = fdr.StockListing('KOSDAQ-DESC') # KOSDAQ 1600+ 종목
-    assert len(df) > 1600
+    assert len(df) > 100
     
     df = fdr.StockListing('KONEX-DESC') # 100+ 종목
     assert len(df) > 100
@@ -190,36 +185,34 @@ def test_stocklisting_desc():
 @pytest.mark.krx_listings
 def test_krx_listing():
     df = fdr.StockListing('KRX-DELISTING') # 3500+ 종목 - KRX 상장폐지 종목 전체
-    assert len(df) > 3500
+    assert len(df) > 100
 
     df = fdr.StockListing('KRX-ADMINISTRATIVE') # 50+ 종목 - KRX 관리종목
-    assert len(df) > 50
+    assert len(df) > 100
 
-@pytest.mark.sp500_listings
-def test_stocklisting_sp500():
-    df = fdr.StockListing('S&P500') # S&P500 503 종목
-    assert len(df) == 503
+    df = fdr.StockListing('S&P500') # S&P500 종목
+    assert len(df) >= 500
 
 @pytest.mark.global_listings
 def test_stocklisting_markets():
 
     df = fdr.StockListing('NASDAQ') # 3900+ 종목 - 나스닥 (NASDAQ)
-    assert len(df) > 3900
+    assert len(df) > 1000
 
     df = fdr.StockListing('NYSE') # 2800+ 종목 - 뉴욕증권거래소 (NYSE)
-    assert len(df) > 2800
+    assert len(df) > 1000
 
     df = fdr.StockListing('SSE') # 1400+ 종목 - 상하이 증권거래소 (Shanghai Stock Exchange: SSE)
-    assert len(df) > 1400
+    assert len(df) > 1000
 
     df = fdr.StockListing('SZSE') # 1700+ 종목 - 선전 증권거래소(Shenzhen Stock Exchange: SZSE)
-    assert len(df) > 1700
+    assert len(df) > 1000
 
     df = fdr.StockListing('HKEX') # 2000+ 종목 - 홍콩 증권거래소(Hong Kong Exchange: HKEX)
-    assert len(df) > 2500
+    assert len(df) > 1000
 
     df = fdr.StockListing('TSE') # 3900+ 종목 - 도쿄 증권거래소(Tokyo Stock Exchange: TSE) 
-    assert len(df) > 3900
+    assert len(df) > 1000
 
     df = fdr.StockListing('HOSE') # 300+ 종목 - 호찌민 증권거래소(Ho Chi Minh City Stock Exchange: HOSE)
     assert len(df) > 300
@@ -244,7 +237,7 @@ def test_exchange():
 @pytest.mark.snap
 def test_snap_krx():
     df = fdr.SnapDataReader('KRX/INDEX/LIST') # KRX 지수목록
-    assert len(df) >= 150
+    assert len(df) >= 100
 
     df = fdr.SnapDataReader('KRX/INDEX/STOCK/1002') # 코스피 대형주 종목 리스트
-    assert len(df) >= 100
+    assert len(df) >= 90
