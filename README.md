@@ -1,7 +1,7 @@
 # FinanceDataReader
-[FinanceData.KR](FinanceData.KR) Open Source Financial data reader 
+Open Source Financial data reader
 
-**2018-2024 [FinanceData.KR]()**
+**2018-2025 [FinanceData.KR]()**
 
 # Overview
 The FinanceDataReader is financial data reader(crawler) for finance. <br>
