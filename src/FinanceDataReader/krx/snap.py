@@ -4,8 +4,10 @@
 import requests
 import pandas as pd
 
-_krx_headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
-               'Referer': 'http://data.krx.co.kr/', }
+_krx_headers = {
+    'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+    'Referer': 'https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd',
+}
 
 def _krx_last_working_day(date=None):
     '''지정한 날짜에서 가장 가까운 영업일

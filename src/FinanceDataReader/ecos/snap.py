@@ -66,7 +66,7 @@ K219,건축착공면적,Results of Construction Start,㎡,M
 K253,경기동행지수순환변동치,Cyclical Component of Composite Coincident Index,,M
 K254,경기선행지수순환변동치,Cyclical Component of Composite Leading Index,,M
 K252,소비자심리지수,Composite Consumer Sentiment Index,,M
-K268,제조업업황실적BSI,"BSI(Manufact. Business Con., Tendency)",,M
+K220,전산업생산지수(농림어업 제외),"Index of All Industry Production(excluding Agriculture, Forestry and Fishing)",,M
 K269,경제심리지수,Economic Sentiment Index,,M
 K267,제조업매출액증감률,Growth Rate of Sales in Manufacturing,% ,A
 K256,제조업매출액세전순이익률,Ordinary Income to Sales in Manufacturing,% ,A
@@ -157,7 +157,7 @@ ECOS/SNAP/1203,"설비투자 관련 지수","설비투자지수, 기계류내수
 ECOS/SNAP/1205,"건설기성액 및 건설수주액","건설기성액, 건설수주액"
 ECOS/SNAP/1206,"건축허가 및 건축착공 면적","건축허가면적, 건축착공면적"
 ECOS/SNAP/1207,"경기순환지표","경기동행지수순환변동치, 경기선행지수순환변동치"
-ECOS/SNAP/1208,"심리지표","소비자심리지수, 제조업업황실적BSI, 경제심리지수"
+ECOS/SNAP/1208,"심리지표","소비자심리지수, 전산업생산지수, 경제심리지수"
 ECOS/SNAP/1209,"기업경영분석지표","제조업매출액증가율, 제조업매출액세전순이익률, 제조업부채비율"
 ECOS/SNAP/1210,"가계 소득 및 소비","가구당월평균소득, 평균소비성향"
 ECOS/SNAP/1211,"소득분배지표","지니계수(~2021), 5분위배율(~2021), 지니계수(2020~), 5분위배율(2020~)"

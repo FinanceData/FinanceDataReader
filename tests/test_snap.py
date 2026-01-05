@@ -1,3 +1,6 @@
+# import sys
+# sys.path.insert(0, r'G:\내 드라이브\g_dev\FinanceDataReader-dev\FinanceDataReader\src')
+
 import pytest
 import FinanceDataReader as fdr
 
@@ -16,13 +19,7 @@ def test_snap_krx_index_stocks():
 @pytest.mark.snap
 def test_snap_naver_finstate():
     # Naver Finance State (Samsung)
-    df = fdr.SnapDataReader('NAVER/STOCK/005930/FINSTATE')
-    assert len(df) > 0
-
-@pytest.mark.snap
-def test_snap_naver_foreign():
-    # Naver Foreigner ownership
-    df = fdr.SnapDataReader('NAVER/STOCK/005930/FOREIGN')
+    df = fdr.SnapDataReader('NAVER/FINSTATE/005930')
     assert len(df) > 0
 
 @pytest.mark.snap

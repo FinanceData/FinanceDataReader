@@ -2,6 +2,7 @@ import requests
 import json
 from json.decoder import JSONDecodeError
 import pandas as pd
+from bs4 import BeautifulSoup
 
 from FinanceDataReader._utils import (_convert_letter_to_num, _validate_dates)
 
@@ -40,12 +41,13 @@ class NaverStockListing:
             raise ModuleNotFoundError(__tqdm_msg)
                 
         url = f'http://api.stock.naver.com/stock/exchange/{exchange}/marketValue?page=1&pageSize=60'
-        headers={'user-agent': 'Mozilla/5.0'}
+        headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
         try:
             r = requests.get(url, headers=headers)
             jo = json.loads(r.text)
+            soup = BeautifulSoup(r.text, 'html.parser')
         except JSONDecodeError as e:
-            print(r.text)
+            print(soup.text)
             raise Exception(f'{r.status_code} "{r.reason}" Server response delayed. Retry later.')
             
         if verbose == 1:

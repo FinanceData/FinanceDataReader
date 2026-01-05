@@ -1,5 +1,9 @@
-import pytest
+# ----------------------------------------------
+# import sys
+# sys.path.insert(0, r'G:\내 드라이브\g_dev\FinanceDataReader-dev\FinanceDataReader\src')
+
 import FinanceDataReader as fdr
+import pytest
 import pandas as pd
 
 @pytest.mark.krx

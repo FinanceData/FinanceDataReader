@@ -11,12 +11,18 @@ class KrxMarcapListing:
     def __init__(self, market):
         self.market = market
         self.headers = {
-            'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
-            'Referer': 'http://data.krx.co.kr/'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Referer': 'https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd'
             }
         
     def read(self):
         url = 'http://data.krx.co.kr/comm/bldAttendant/executeForResourceBundle.cmd?baseName=krx.mdc.i18n.component&key=B128.bld'
+        try:
+            r = requests.get(url, headers=self.headers)
+            j = json.loads(r.text)
+        except:
+            print(r.text)
+            raise ValueError(f"Failed to load data from {url}")
         j = json.loads(requests.get(url, headers=self.headers).text)
         date_str = j['result']['output'][0]['max_work_dt']
         
@@ -24,7 +30,7 @@ class KrxMarcapListing:
         if self.market not in mkt_map:
             raise ValueError(f"market shoud be one of {list(mkt_map.keys())}")
         
-        url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
+        url = 'https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
         data = {
             'bld': 'dbms/MDC/STAT/standard/MDCSTAT01501',
             'mktId': mkt_map[self.market], # 'ALL'=전체, 'STK'=KOSPI, 'KSQ'=KOSDAQ, 'KNX'=KONEX
@@ -58,7 +64,7 @@ class KrxStockListing: # descriptive information
         self.market = market
         self.headers = {
             'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
-            'Referer': 'http://data.krx.co.kr/'
+            'Referer': 'https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd'
             }
 
     def read(self):
@@ -122,8 +128,10 @@ def _krx_delisting_2years(from_date, to_date):
         'share': '1',
         'csvxls_isNo': 'true',
     }
-    _krx_headers = {'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
-                    'Referer': 'http://data.krx.co.kr/', }
+    _krx_headers = {
+        'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
+        'Referer': 'https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd'
+    }
     url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
 
     r = requests.post(url, data, headers=_krx_headers)
@@ -174,7 +182,7 @@ class KrxDelisting:
         self.market = market
         self.headers = {
             'User-Agent': 'Chrome/78.0.3904.87 Safari/537.36',
-            'Referer': 'http://data.krx.co.kr/'
+            'Referer': 'https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd'
             }
         
         self.start = datetime(1960,1,1) if start==None else pd.to_datetime(start)
