@@ -83,7 +83,9 @@ def DataReader(symbol:str, start=None, end=None, exchange=None, data_source=None
             symbol = krx_index_symbol_map[symbol]
             return KrxIndexReader(symbol, start, end).read()
 
-        if re.match(r'\d{5}[0-9KLMN]', code): 
+        # KRX stock code reform (2024.1.1~)
+        # https://www.hankyung.com/article/2023052334076
+        if re.match(r'\d{4}[0-9A-HJ-NP-TV-Z][0-9KLMN]', code):
             # Naver is default source for KRX stocks  
             return NaverDailyReader(codes, start, end).read()
         # 1-4) US and other stocks 
