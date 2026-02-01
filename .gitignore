@@ -11,7 +11,10 @@ docs/build
 *.iml
 *~
 .vscode
+.venv
 .pytest_cache
+.env
+.env.example
 
 # pyenv
 .python-version

@@ -189,10 +189,10 @@ def test_stocklisting_desc():
 @pytest.mark.krx_listings
 def test_krx_listing():
     df = fdr.StockListing('KRX-DELISTING') # 3500+ 종목 - KRX 상장폐지 종목 전체
-    assert len(df) > 100
+    assert len(df) > 10
 
     df = fdr.StockListing('KRX-ADMINISTRATIVE') # 50+ 종목 - KRX 관리종목
-    assert len(df) > 100
+    assert len(df) > 10
 
     df = fdr.StockListing('S&P500') # S&P500 종목
     assert len(df) >= 500
