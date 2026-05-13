@@ -17,7 +17,7 @@ FinanceDataReader는 `pandas-datareader <https://pandas-datareader.readthedocs.i
 * 해외주식 가격: AAPL(애플), AMZN(아마존), GOOG(구글) 등
 * 국내주식 가격: 005930(삼성전자), 091990(셀트리온헬스케어) 등
 * 지수: KS11(코스피), KQ11(코스닥), DJI(다우), IXIC(나스닥), US500(S&P 500)
-* 환율: USD/KRX (원달러), USD/EUR(달러/유로화), CNY/KRW: 위엔화/원화
+* 환율: USD/KRW (원달러), USD/EUR(달러/유로화), CNY/KRW: 위엔화/원화
 * 암호화폐: BTC/USD (비트코인/달러, Bitfinex), BTC/KRW (비트코인/원화, 빗썸)
 * 거래소별 전체 종목 코드: KRX, NASDAQ, NYSE, AMEX, S&P 500 종목
 
@@ -91,7 +91,7 @@ Release
 - StockListing, SP500 (S&P 500 Listings, wikipedia), 추가
 
 2018-05-16 v0.1.0
-- StockListing KRX, KOSPI, KODAQ, KONEX, 추가 
+- StockListing KRX, KOSPI, KOSDAQ, KONEX, 추가 
 - StockListing NASDAQ, NYSE, AMEX, 추가
 
 2018-05-14 v0.0.1
@@ -117,5 +117,5 @@ MIT license를 따릅니다
 * :ref:`search`
 
 
-2018 FinanceData.KR http://financedata.kr
+2018-2026 FinanceData.KR http://financedata.kr
 

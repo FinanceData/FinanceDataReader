@@ -4,7 +4,12 @@ from .data import (StockListing)
 from .data import (EtfListing)
 from .chart import (plot)
 
-__version__ = '0.9.110'
+import importlib.metadata
+
+try:
+    __version__ = importlib.metadata.version("finance-datareader")
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "unknown"
 
 __all__ = [
     '__version__', 

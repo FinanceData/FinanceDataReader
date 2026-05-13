@@ -1,6 +1,6 @@
 # ----------------------------------------------
 import sys
-sys.path.insert(0, r'G:\내 드라이브\g_dev\FinanceDataReader-dev\FinanceDataReader\src')
+sys.path.insert(0, r'D:\dev\FinanceDataReader-dev\FinanceDataReader\src')
 
 import pytest
 import FinanceDataReader as fdr
