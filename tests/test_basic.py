@@ -153,7 +153,7 @@ def test_pref_us():
 def test_stocklistings():
 
     # KRX 상장회사(발행회사)목록 (가격 중심, 주식 종목) - 시가총액순
-    # Code, ISU_CD, Name, Market, Dept, Close, ChangeCode, Changes, ChagesRatio, Open, High, Low, Volume, Amount, Marcap, Stocks, MarketId
+    # Code, ISU_CD, Name, Market, Dept, Close, ChangeCode, Changes, ChangesRatio, Open, High, Low, Volume, Amount, Marcap, Stocks, MarketId
     df = fdr.StockListing('KRX') # 2,700+ 종목 - 한국거래소(=코스피+코스닥+코넥스)
     assert len(df) > 2700
 

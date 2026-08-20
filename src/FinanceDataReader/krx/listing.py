@@ -32,6 +32,7 @@ class KrxMarcapListingCache:
         # 해당 날짜의 데이터를 가져옴
         url = f'https://raw.githubusercontent.com/FinanceData/fdr_krx_data_cache/refs/heads/master/data/listing/krx/{formatted_date}.csv'
         df = pd.read_csv(url, dtype={'Code': str, 'Dept': str, 'ChangeCode': str, 'MarketId': str})
+        df = df.rename(columns={'ChagesRatio': 'ChangesRatio'})
         
         mkt_map = {'KRX-MARCAP':'ALL', 'KRX':'ALL', 'KOSPI':'STK', 'KOSDAQ':'KSQ', 'KONEX':'KNX'}
         if self.market not in mkt_map:
@@ -89,7 +90,7 @@ class KrxMarcapListing:
         df = df.sort_values('MKTCAP', ascending=False)
         cols_map = {'ISU_SRT_CD':'Code', 'ISU_ABBRV':'Name', 
                     'TDD_CLSPRC':'Close', 'SECT_TP_NM': 'Dept', 'FLUC_TP_CD':'ChangeCode', 
-                    'CMPPREVDD_PRC':'Changes', 'FLUC_RT':'ChagesRatio', 'ACC_TRDVOL':'Volume', 
+                    'CMPPREVDD_PRC':'Changes', 'FLUC_RT':'ChangesRatio', 'ACC_TRDVOL':'Volume',
                     'ACC_TRDVAL':'Amount', 'TDD_OPNPRC':'Open', 'TDD_HGPRC':'High', 'TDD_LWPRC':'Low',
                     'MKTCAP':'Marcap', 'LIST_SHRS':'Stocks', 'MKT_NM':'Market', 'MKT_ID': 'MarketId' }
         df = df.rename(columns=cols_map)
@@ -335,4 +336,3 @@ class KrxAdministrative:
         df.rename(columns=col_map, inplace=True)    
         df.attrs = {'exchange':'KRX', 'source':'KRX', 'data':'LISTINGS'}
         return df[['Symbol', 'Name', 'DesignationDate', 'Reason']]    
-
