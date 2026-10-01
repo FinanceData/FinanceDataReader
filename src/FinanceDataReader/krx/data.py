@@ -61,14 +61,14 @@ def _krx_index_price_2years(idx1, idx2, from_date, to_date):
 def _krx_index_price(idx1, idx2, from_date, to_date):
     df_list = []
     _start = from_date
-    _end = datetime(_start.year+2, _start.month, _start.day) - timedelta(days=1)
+    _end = _start + pd.DateOffset(years=2) - timedelta(days=1)
     while True: 
         df = _krx_index_price_2years(idx1, idx2, _start, _end)
         df_list.append(df)
         if to_date <= _end: 
             break
         _start = _end + timedelta(days=1)
-        _end = datetime(_start.year+2, _start.month, _start.day) - timedelta(days=1)
+        _end = _start + pd.DateOffset(years=2) - timedelta(days=1)
 
     df = pd.concat(df_list)
     col_map = {'TRD_DD':'Date', 'CLSPRC_IDX':'Close', 'FLUC_TP_CD':'UpDown', 
@@ -134,14 +134,14 @@ def _krx_stock_price_2years(full_code, from_date, to_date):
 def _krx_stock_price(full_code, from_date, to_date):
     df_list = []
     _start = from_date
-    _end = datetime(_start.year+2, _start.month, _start.day) - timedelta(days=1)
+    _end = _start + pd.DateOffset(years=2) - timedelta(days=1)
     while True: 
         df = _krx_stock_price_2years(full_code, _start, _end)
         df_list.append(df)
         if to_date <= _end: 
             break
         _start = _end + timedelta(days=1)
-        _end = datetime(_start.year+2, _start.month, _start.day) - timedelta(days=1)
+        _end = _start + pd.DateOffset(years=2) - timedelta(days=1)
 
     df = pd.concat(df_list)
     if(len(df) == 0):

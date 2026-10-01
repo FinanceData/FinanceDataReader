@@ -236,14 +236,14 @@ def _krx_delisting_2years(from_date, to_date):
 def _krx_delisting(from_date, to_date):
     df_list = []
     _start = from_date
-    _end = datetime(_start.year+2, _start.month, _start.day) - timedelta(days=1)
+    _end = _start + pd.DateOffset(years=2) - timedelta(days=1)
     while True: 
         df = _krx_delisting_2years(_start, _end)
         df_list.append(df)
         if to_date <= _end: 
             break
         _start = _end + timedelta(days=1)
-        _end = datetime(_start.year+2, _start.month, _start.day) - timedelta(days=1)
+        _end = _start + pd.DateOffset(years=2) - timedelta(days=1)
 
     df = pd.concat(df_list)
     if(len(df) == 0):
