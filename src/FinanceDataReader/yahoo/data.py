@@ -45,6 +45,8 @@ def _yahoo_data_reader(symbol, exchange, start, end):
     df = pd.DataFrame(data=values, index=index)
     df = df.rename(columns=col_map) # columns rename
     df = df[col_map.values()] # columns reorder
+    # Yahoo can append an updated quote for the same daily bar; keep the final row.
+    df = df[~df.index.duplicated(keep='last')]
     return df
     
 class YahooDailyReader:
